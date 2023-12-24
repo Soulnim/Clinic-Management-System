@@ -12,6 +12,7 @@ import java.io.*;
 
 public class ClinicLL
 {
+    // Declare necessary variable
     static Scanner inText = new Scanner(System.in);
     static Scanner inChar = new Scanner(System.in);
     static Scanner inNum = new Scanner(System.in);
@@ -23,8 +24,6 @@ public class ClinicLL
     static LinkedList medicine = new LinkedList();
     
     public static void main(String args[]) {
-        // Declare necessary variable
-        
         // Fetch data from clinic.txt
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File("clinicdata.txt")));
@@ -33,19 +32,17 @@ public class ClinicLL
                 StringTokenizer st = new StringTokenizer(data, ";");
                 String dataType = st.nextToken();
                 if (dataType.equals("Appointment")) {
-                    String appID = st.nextToken();
-                    String patID = st.nextToken();
+                    String NRIC = st.nextToken();
                     String date = st.nextToken();
                     String time = st.nextToken();
                     String type = st.nextToken();
-                    appointment.addLast(new Appointment(appID,patID,date,time,type));
+                    appointment.addLast(new Appointment(NRIC,date,time,type));
                 }
                 else if (dataType.equals("Patient")) {
-                    String patID = st.nextToken();
                     String NRIC = st.nextToken();
                     String name = st.nextToken();
                     int age = Integer.parseInt(st.nextToken());
-                    patient.addLast(new Patient(patID,NRIC,name,age));
+                    patient.addLast(new Patient(NRIC,name,age));
                 }
                 else if (dataType.equals("Doctor")) {
                     String docID = st.nextToken();
@@ -85,13 +82,7 @@ public class ClinicLL
         
         // Store data to clinicdata.txt
         try {
-            FileWriter fw = new FileWriter("appointment.txt");
-            
-            //Appointment current = (Appointment) appQ.dequeue();
-            //while (current != null) {
-            //    fw.write(current.toData()+"\n");
-            //    current = (Appointment) appQ.dequeue();
-            //}
+            FileWriter fw = new FileWriter("clinicdata.txt");
             
             Appointment appData = (Appointment) appointment.getFirst();
             while (appData != null) {
@@ -159,7 +150,7 @@ public class ClinicLL
             System.out.print(" Option : ");
             int option_app = inNum.nextInt();
             if (option_app == 1) {
-                viewAppointment();
+                viewList("appointment");
             }
             else if (option_app == 2) {
                 addAppointment();
@@ -190,7 +181,7 @@ public class ClinicLL
             System.out.print(" Option : ");
             int option_app = inNum.nextInt();
             if (option_app == 1) {
-                viewPatient();
+                viewList("patient");
             }
             else if (option_app == 2) {
                 editPatient();
@@ -215,7 +206,7 @@ public class ClinicLL
             System.out.print(" Option : ");
             int option_app = inNum.nextInt();
             if (option_app == 1) {
-                viewDoctor();
+                viewList("doctor");
             }
             else if (option_app == 2) {
                 editDoctor();
@@ -240,7 +231,7 @@ public class ClinicLL
             System.out.print(" Option : ");
             int option_app = inNum.nextInt();
             if (option_app == 1) {
-                viewInvoice();
+                viewList("invoice");
             }
             else if (option_app == 2) {
                 editInvoice();
@@ -265,7 +256,7 @@ public class ClinicLL
             System.out.print(" Option : ");
             int option_app = inNum.nextInt();
             if (option_app == 1) {
-                viewMedicine();
+                viewList("medicine");
             }
             else if (option_app == 2) {
                 addMedicine();
@@ -318,9 +309,9 @@ public class ClinicLL
         }
     }
     
-    // Appointment's Processes
-    public static void viewAppointment() {
-        int totalApp = 0;
+    // VIEW LIST
+    public static void viewList(String listName) {
+        int totalData = 0;
         int currentPage = 1;
         while (true) {
             System.out.println("\f");
@@ -328,16 +319,70 @@ public class ClinicLL
             System.out.println("| VIEW APPOINTMENTS");
             System.out.println("+--------------------+----------------+");
             int counter = 0;
-            Appointment current = (Appointment) appointment.getFirst();
-            while (counter != totalApp) {
+            if (listName.equals("appointment")) {
+                Appointment current = (Appointment) appointment.getFirst();
+                while (counter != totalData) {
+                        current = (Appointment) appointment.getNext();
+                        counter++;
+                }
+                while (current != null && counter < (10 * currentPage)) {
+                    System.out.println(" "+(counter+1)+" | "+current.toString());
+                    System.out.println("+-------------------------------------+");
                     current = (Appointment) appointment.getNext();
                     counter++;
+                }
             }
-            while (current != null && counter < (10 * currentPage)) {
-                System.out.println(" "+(counter+1)+" | "+current.toString());
-                System.out.println("+-------------------------------------+");
-                current = (Appointment) appointment.getNext();
-                counter++;
+            else if (listName.equals("patient")) {
+                Patient current = (Patient) patient.getFirst();
+                while (counter != totalData) {
+                        current = (Patient) patient.getNext();
+                        counter++;
+                }
+                while (current != null && counter < (10 * currentPage)) {
+                    System.out.println(" "+(counter+1)+" | "+current.toString());
+                    System.out.println("+-------------------------------------+");
+                    current = (Patient) patient.getNext();
+                    counter++;
+                }
+            }
+            else if (listName.equals("doctor")) {
+                Doctor current = (Doctor) doctor.getFirst();
+                while (counter != totalData) {
+                        current = (Doctor) doctor.getNext();
+                        counter++;
+                }
+                while (current != null && counter < (10 * currentPage)) {
+                    System.out.println(" "+(counter+1)+" | "+current.toString());
+                    System.out.println("+-------------------------------------+");
+                    current = (Doctor) doctor.getNext();
+                    counter++;
+                }
+            }
+            else if (listName.equals("invoice")) {
+                Invoice current = (Invoice) invoice.getFirst();
+                while (counter != totalData) {
+                        current = (Invoice) invoice.getNext();
+                        counter++;
+                }
+                while (current != null && counter < (10 * currentPage)) {
+                    System.out.println(" "+(counter+1)+" | "+current.toString());
+                    System.out.println("+-------------------------------------+");
+                    current = (Invoice) invoice.getNext();
+                    counter++;
+                }
+            }
+            else if (listName.equals("medicine")) {
+                Medicine current = (Medicine) medicine.getFirst();
+                while (counter != totalData) {
+                        current = (Medicine) medicine.getNext();
+                        counter++;
+                }
+                while (current != null && counter < (10 * currentPage)) {
+                    System.out.println(" "+(counter+1)+" | "+current.toString());
+                    System.out.println("+-------------------------------------+");
+                    current = (Medicine) medicine.getNext();
+                    counter++;
+                }
             }
             System.out.println("[ Page : "+currentPage+" ]");
             if (currentPage > 1) {
@@ -346,11 +391,11 @@ public class ClinicLL
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'C' || option == 'c') {
-                    totalApp -= 10;
+                    totalData -= 10;
                     currentPage--;
                 }
                 else if (option == 'V' || option == 'v') {
-                    totalApp += 10;
+                    totalData += 10;
                     currentPage++;
                 } else {
                     break;
@@ -361,7 +406,7 @@ public class ClinicLL
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'V' || option == 'v') {
-                    totalApp += 10;
+                    totalData += 10;
                     currentPage++;
                 } else {
                     break;
@@ -370,24 +415,40 @@ public class ClinicLL
         }
         dashboard();
     }
-    public static void addAppointment() {}
+    
+    public static void addAppointment() {
+        System.out.println("\f");
+        System.out.println("+-------------------------------------+");
+        System.out.println("| ADD APPOINTMENTS");
+        System.out.println("+--------------------+----------------+");
+        System.out.print(" Enter NRIC : ");
+        String NRIC = inText.nextLine();
+        System.out.print(" Date (DD/MM/YYYY) : ");
+        String date = inText.nextLine();
+        System.out.print(" Time (24-hours format) : ");
+        String time = inText.nextLine();
+        System.out.print(" Type : ");
+        String type = inText.nextLine();
+        appointment.addLast(new Appointment(NRIC,date,time,type));
+        System.out.println("+-------------------------------------+");
+        System.out.println("| Data has been added!");
+        System.out.println("+--------------------+----------------+");
+        System.out.print(" Press [Enter] to continue");
+        String enter = inText.nextLine();
+        dashboard();
+    }
     public static void editAppointment() {}
     public static void deleteAppointment() {}
     
-    // Patient's Processes
-    public static void viewPatient() {}
     public static void editPatient() {}
     
     // Doctor's Processes
-    public static void viewDoctor() {}
     public static void editDoctor() {}
     
     // Invoice's Processes
-    public static void viewInvoice() {}
     public static void editInvoice() {}
     
     // Medicine's Processes
-    public static void viewMedicine() {}
     public static void addMedicine() {}
     public static void editMedicine() {}
     public static void deleteMedicine() {}
