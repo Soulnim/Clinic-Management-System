@@ -1,0 +1,32 @@
+Appointment;120202102345;12/02/2023;1030;Medical Checkup
+Appointment;231010113425;13/03/2023;1030;Medical Checkup
+Appointment;120202102345;13/03/2023;1130;Vaccination
+Appointment;231010113425;01/15/2023;0900;Dental Checkup
+Appointment;120202102345;02/20/2023;1030;General Consultation
+Appointment;231010113425;03/05/2023;1400;Blood Test
+Appointment;120202102345;04/10/2023;1130;X-ray
+Appointment;231010113425;05/15/2023;0930;Physical Therapy
+Appointment;231010113425;06/20/2023;1100;Eye Examination
+Appointment;120202102345;07/25/2023;1300;Dermatology Consultation
+Appointment;120202102345;08/30/2023;1000;Vaccination
+Appointment;231010113425;09/04/2023;1200;Orthopedic Consultation
+Appointment;231010113425;10/10/2023;0800;Cardiology Checkup
+Appointment;040217100987;12/12/2023;1230;Medical
+Patient;120202102345;Ahmad bin Albab;25
+Patient;231010113425;Halimah binti Hashim;32
+Patient;091112204567;Siti Nur Afiqah;22
+Patient;150506308712;Mohammad Azhar;45
+Patient;071225409831;Lina bt. Rahim;28
+Patient;200818507654;Razif bin Ismail;38
+Patient;060703601289;Nor Azlina;20
+Patient;180910702345;Farid bin Hassan;33
+Patient;300615803498;Aisyah binti Rahman;29
+Patient;120425904567;Zainal bin Abdullah;50
+Patient;041205908763;Hani bt. Mohd Yusof;35
+Patient;250712406789;Rahman bin Ibrahim;42
+Patient;110317609823;Nurul Aida;27
+Patient;091008701234;Ahmad Faisal;31
+Patient;180523908712;Zulaikha binti Ali;24
+Doctor;D1000;Aziz bin Fahmi;General;1234326758
+Doctor;D1001;Rahmah binti Deraman;General;34256457658
+Invoice;I1000;100.0;Cash
