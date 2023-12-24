@@ -15,13 +15,16 @@ public class ClinicLL
     static Scanner inText = new Scanner(System.in);
     static Scanner inChar = new Scanner(System.in);
     static Scanner inNum = new Scanner(System.in);
+    
+    static LinkedList appointment = new LinkedList();
+    static LinkedList patient = new LinkedList();
+    static LinkedList doctor = new LinkedList();
+    static LinkedList invoice = new LinkedList();
+    static LinkedList medicine = new LinkedList();
+    
     public static void main(String args[]) {
         // Declare necessary variable
-        LinkedList appointment = new LinkedList();
-        LinkedList patient = new LinkedList();
-        LinkedList doctor = new LinkedList();
-        LinkedList invoice = new LinkedList();
-        LinkedList medicine = new LinkedList();
+        
         // Fetch data from clinic.txt
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File("clinicdata.txt")));
@@ -34,7 +37,8 @@ public class ClinicLL
                     String patID = st.nextToken();
                     String date = st.nextToken();
                     String time = st.nextToken();
-                    appointment.addLast(new Appointment(appID,patID,date,time));
+                    String type = st.nextToken();
+                    appointment.addLast(new Appointment(appID,patID,date,time,type));
                 }
                 else if (dataType.equals("Patient")) {
                     String patID = st.nextToken();
@@ -75,8 +79,49 @@ public class ClinicLL
             if (access_granted) {
                 // Dashboard
                 dashboard();
+                break; // temp, delete this after testing
             }
         }
+        
+        // Store data to clinicdata.txt
+        try {
+            FileWriter fw = new FileWriter("appointment.txt");
+            
+            //Appointment current = (Appointment) appQ.dequeue();
+            //while (current != null) {
+            //    fw.write(current.toData()+"\n");
+            //    current = (Appointment) appQ.dequeue();
+            //}
+            
+            Appointment appData = (Appointment) appointment.getFirst();
+            while (appData != null) {
+                fw.write(appData.rawData()+"\n");
+                appData = (Appointment) appointment.getNext();
+            }
+            Patient patData = (Patient) patient.getFirst();
+            while (patData != null) {
+                fw.write(patData.rawData()+"\n");
+                patData = (Patient) patient.getNext();
+            }
+            Doctor docData = (Doctor) doctor.getFirst();
+            while (docData != null) {
+                fw.write(docData.rawData()+"\n");
+                docData = (Doctor) doctor.getNext();
+            }
+            Invoice invData = (Invoice) invoice.getFirst();
+            while (invData != null) {
+                fw.write(invData.rawData()+"\n");
+                invData = (Invoice) invoice.getNext();
+            }
+            Medicine medData = (Medicine) medicine.getFirst();
+            while (medData != null) {
+                fw.write(medData.rawData()+"\n");
+                medData = (Medicine) medicine.getNext();
+            }
+            
+            fw.close();
+        }
+        catch (Exception e) { System.err.println(e.getMessage()); }
     }
     
     // Login system, return either true/false
@@ -85,7 +130,7 @@ public class ClinicLL
     // Dashboard
     public static void dashboard() {
         // Dashboard
-        System.out.println("\f");
+        System.out.print("\f");
         System.out.println("+-------------------------------------+");
         System.out.println("| CMS DASHBOARD");
         System.out.println("+--------------------+----------------+");
@@ -100,7 +145,7 @@ public class ClinicLL
         char option_dash = inChar.next().charAt(0);
         if (option_dash == 'A' || option_dash == 'a') {
             // Appointment
-            System.out.println("\f");
+            System.out.print("\f");
             System.out.println("+-------------------------------------+");
             System.out.println("| CMS DASHBOARD");
             System.out.println("+--------------------+----------------+");
@@ -131,7 +176,7 @@ public class ClinicLL
         }
         else if (option_dash == 'B' || option_dash == 'b') {
             // Patient
-            System.out.println("\f");
+            System.out.print("\f");
             System.out.println("+-------------------------------------+");
             System.out.println("| CMS DASHBOARD");
             System.out.println("+--------------------+----------------+");
@@ -156,7 +201,7 @@ public class ClinicLL
         }
         else if (option_dash == 'C' || option_dash == 'c') {
             // Doctor
-            System.out.println("\f");
+            System.out.print("\f");
             System.out.println("+-------------------------------------+");
             System.out.println("| CMS DASHBOARD");
             System.out.println("+--------------------+----------------+");
@@ -181,7 +226,7 @@ public class ClinicLL
         }
         else if (option_dash == 'D' || option_dash == 'd') {
             // Invoice
-            System.out.println("\f");
+            System.out.print("\f");
             System.out.println("+-------------------------------------+");
             System.out.println("| CMS DASHBOARD");
             System.out.println("+--------------------+----------------+");
@@ -206,7 +251,7 @@ public class ClinicLL
         }
         else if (option_dash == 'E' || option_dash == 'e') {
             // Log Out
-            System.out.println("\f");
+            System.out.print("\f");
             System.out.println("+-------------------------------------+");
             System.out.println("| CMS DASHBOARD");
             System.out.println("+--------------------+----------------+");
@@ -237,7 +282,7 @@ public class ClinicLL
         }
         else if (option_dash == 'F' || option_dash == 'f') {
             // Log Out
-            System.out.println("\f");
+            System.out.print("\f");
             System.out.println("+-------------------------------------+");
             System.out.println("| CMS DASHBOARD");
             System.out.println("+--------------------+----------------+");
@@ -250,15 +295,14 @@ public class ClinicLL
             System.out.println("+--------------------+----------------+");
             System.out.print(" Option : ");
             char option_logout = inChar.next().charAt(0);
-            if (option_logout == 1) {
-                viewAppointment();
-            }
-            else if (option_logout == 2) {
-                addAppointment();
+            if (option_logout == 'Y' || option_logout ==  'y') {
+                return;
+            } else {
+                dashboard();
             }
         }
         else {
-            System.out.println("\f");
+            System.out.print("\f");
             System.out.println("+-------------------------------------+");
             System.out.println("| CMS DASHBOARD");
             System.out.println("+--------------------+----------------+");
@@ -270,11 +314,62 @@ public class ClinicLL
             System.out.println("+--------------------+----------------+");
             System.out.println(" Press [Enter] to continue");
             String temp = inText.nextLine();
+            dashboard();
         }
     }
     
     // Appointment's Processes
-    public static void viewAppointment() {}
+    public static void viewAppointment() {
+        int totalApp = 0;
+        int currentPage = 1;
+        while (true) {
+            System.out.println("\f");
+            System.out.println("+-------------------------------------+");
+            System.out.println("| VIEW APPOINTMENTS");
+            System.out.println("+--------------------+----------------+");
+            int counter = 0;
+            Appointment current = (Appointment) appointment.getFirst();
+            while (counter != totalApp) {
+                    current = (Appointment) appointment.getNext();
+                    counter++;
+            }
+            while (current != null && counter < (10 * currentPage)) {
+                System.out.println(" "+(counter+1)+" | "+current.toString());
+                System.out.println("+-------------------------------------+");
+                current = (Appointment) appointment.getNext();
+                counter++;
+            }
+            System.out.println("[ Page : "+currentPage+" ]");
+            if (currentPage > 1) {
+                System.out.println(" Search or [C] Left, [V] Right, [H] Home");
+                System.out.println("+-------------------------------------+");
+                System.out.print(" Option : ");
+                char option = inChar.next().charAt(0);
+                if (option == 'C' || option == 'c') {
+                    totalApp -= 10;
+                    currentPage--;
+                }
+                else if (option == 'V' || option == 'v') {
+                    totalApp += 10;
+                    currentPage++;
+                } else {
+                    break;
+                }
+            } else {
+                System.out.println(" Search or [V] Right, [H] Home : ");
+                System.out.println("+-------------------------------------+");
+                System.out.print(" Option : ");
+                char option = inChar.next().charAt(0);
+                if (option == 'V' || option == 'v') {
+                    totalApp += 10;
+                    currentPage++;
+                } else {
+                    break;
+                }
+            }
+        }
+        dashboard();
+    }
     public static void addAppointment() {}
     public static void editAppointment() {}
     public static void deleteAppointment() {}
