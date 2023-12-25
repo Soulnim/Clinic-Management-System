@@ -248,8 +248,8 @@ public class ClinicLL
             System.out.println("| [ ] Appointment    | [1] View       |");
             System.out.println("| [ ] Patient        | [2] Add        |");
             System.out.println("| [ ] Doctor         | [3] Edit       |");
-            System.out.println("| [ ] Invoice        | [4] Delete     |");
-            System.out.println("| [E] Medicine    >> | [5] Edit       |");
+            System.out.println("| [ ] Invoice        |                |");
+            System.out.println("| [E] Medicine    >> |                |");
             System.out.println("| [ ] Log Out        |                |");
             System.out.println("+--------------------+----------------+");
             System.out.print(" Option : ");
@@ -477,6 +477,84 @@ public class ClinicLL
         dashboard();
     }
     
+    // ERROR
+    // after user had done editing an instance, if the user want to go back
+    // the system will also shutdown
+    public static void editList(String listName) {
+        boolean isEdit = false;
+        if (listName.equals("appointment")) {
+            int option = viewList("appointment");
+            if (option == 0) {
+                return;
+            }
+            int counter = 1;
+            Appointment current = (Appointment) appointment.getFirst();
+            while (counter != option) {
+                current = (Appointment) appointment.getNext();
+                counter++;
+            }
+            System.out.print("\f");
+            System.out.println("+-------------------------------------+");
+            System.out.println("| EDIT APPOINTMENT");
+            System.out.println("+--------------------+----------------+");
+            System.out.println(" "+option+" ] "+current.toString());
+            System.out.println("+-------------------------------------+");
+            System.out.println(" 1] Edit Date");
+            System.out.println(" 2] Edit Time");
+            System.out.println(" 3] Edit Type");
+            System.out.println(" 4] Back");
+            System.out.println("+-------------------------------------+");
+            System.out.print(" Option : ");
+            int editType = inNum.nextInt();
+            System.out.println("+-------------------------------------+");
+            if (editType == 1) {
+                System.out.println(" Current date : "+current.getDate());
+                System.out.print(" Enter new date (DD/MM/YYYY) : ");
+                String newDate = inText.nextLine();
+                current.setDate(newDate);
+                isEdit = true;
+            }
+            else if (editType == 2) {
+                System.out.println(" Current time : "+current.getTime());
+                System.out.print(" Enter new time (24-hours format) : ");
+                String newTime = inText.nextLine();
+                current.setTime(newTime);
+                isEdit = true;
+            }
+            else if (editType == 3) {
+                System.out.println(" Current type : "+current.getType());
+                System.out.print(" Enter new type : ");
+                String newType = inText.nextLine();
+                current.setType(newType);
+                isEdit = true;
+            }
+            else {
+                editList("appointment");
+            }
+        }
+        else if (listName.equals("patient")) {
+            // continue...
+        }
+        else if (listName.equals("doctor")) {
+            // continue...
+        }
+        else if (listName.equals("invoice")) {
+            // continue...
+        }
+        else if (listName.equals("medicine")) {
+            // continue...
+        }
+        if (isEdit == true) {
+            System.out.print("\f");
+            System.out.println("+-------------------------------------+");
+            System.out.println("| Data has been edited!");
+            System.out.println("+--------------------+----------------+");
+            System.out.println(" Press [Enter] to continue");
+            String enter = inText.nextLine();
+        }
+        editList(listName);
+    }
+    
     public static void deleteFromList(String listName) {
         if (listName.equals("appointment")) {
             int option = viewList("appointment");
@@ -530,20 +608,18 @@ public class ClinicLL
             }
         }
         else if (listName.equals("patient")) {
-            
+            // to be determined
         }
         else if (listName.equals("doctor")) {
-            
+            // to be determined
         }
         else if (listName.equals("invoice")) {
-            
+            // to be determined
         }
         else if (listName.equals("medicine")) {
-            
+            // to be determined
         }
         return;
     }
-    
-    public static void editList(String listName) {}
 }
 
