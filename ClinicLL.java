@@ -45,11 +45,11 @@ public class ClinicLL
                     patient.addLast(new Patient(NRIC,name,age));
                 }
                 else if (dataType.equals("Doctor")) {
-                    String docID = st.nextToken();
+                    String NRIC = st.nextToken();
                     String docName = st.nextToken();
                     String specialty = st.nextToken();
                     String phoneNum = st.nextToken();
-                    doctor.addLast(new Doctor(docID,docName,specialty,phoneNum));
+                    doctor.addLast(new Doctor(NRIC,docName,specialty,phoneNum));
                 }
                 else if (dataType.equals("Invoice")) {
                     String invID = st.nextToken();
@@ -79,7 +79,6 @@ public class ClinicLL
                 break; // temp, delete this after testing
             }
         }
-        
         // Store data to clinicdata.txt
         try {
             FileWriter fw = new FileWriter("clinicdata.txt");
@@ -150,16 +149,16 @@ public class ClinicLL
             System.out.print(" Option : ");
             int option_app = inNum.nextInt();
             if (option_app == 1) {
-                viewList("appointment");
+                int value = viewList("appointment");
             }
             else if (option_app == 2) {
-                addAppointment();
+                addToList("appointment");
             }
             else if (option_app == 3) {
-                editAppointment();
+                editList("appointment");
             }
             else if (option_app == 4) {
-                deleteAppointment();
+                deleteFromList("appointment");
             }
             else if (option_app == 5) {
                 dashboard();
@@ -184,7 +183,7 @@ public class ClinicLL
                 viewList("patient");
             }
             else if (option_app == 2) {
-                editPatient();
+                editList("patient");
             }
             else if (option_app == 3) {
                 dashboard();
@@ -209,7 +208,7 @@ public class ClinicLL
                 viewList("doctor");
             }
             else if (option_app == 2) {
-                editDoctor();
+                editList("doctor");
             }
             else if (option_app == 3) {
                 dashboard();
@@ -234,7 +233,7 @@ public class ClinicLL
                 viewList("invoice");
             }
             else if (option_app == 2) {
-                editInvoice();
+                editList("invoice");
             }
             else if (option_app == 3) {
                 dashboard();
@@ -259,13 +258,13 @@ public class ClinicLL
                 viewList("medicine");
             }
             else if (option_app == 2) {
-                addMedicine();
+                addToList("medicine");
             }
             else if (option_app == 3) {
-                editMedicine();
+                editList("medicine");
             }
             else if (option_app == 4) {
-                deleteMedicine();
+                deleteFromList("medicine");
             }
             else if (option_app == 5) {
                 dashboard();
@@ -310,16 +309,16 @@ public class ClinicLL
     }
     
     // VIEW LIST
-    public static void viewList(String listName) {
+    public static int viewList(String listName) {
         int totalData = 0;
         int currentPage = 1;
         while (true) {
             System.out.println("\f");
             System.out.println("+-------------------------------------+");
-            System.out.println("| VIEW APPOINTMENTS");
-            System.out.println("+--------------------+----------------+");
             int counter = 0;
             if (listName.equals("appointment")) {
+                System.out.println("| APPOINTMENTS");
+                System.out.println("+--------------------+----------------+");
                 Appointment current = (Appointment) appointment.getFirst();
                 while (counter != totalData) {
                         current = (Appointment) appointment.getNext();
@@ -333,6 +332,8 @@ public class ClinicLL
                 }
             }
             else if (listName.equals("patient")) {
+                System.out.println("| PATIENTS");
+                System.out.println("+--------------------+----------------+");
                 Patient current = (Patient) patient.getFirst();
                 while (counter != totalData) {
                         current = (Patient) patient.getNext();
@@ -346,6 +347,8 @@ public class ClinicLL
                 }
             }
             else if (listName.equals("doctor")) {
+                System.out.println("| DOCTORS");
+                System.out.println("+--------------------+----------------+");
                 Doctor current = (Doctor) doctor.getFirst();
                 while (counter != totalData) {
                         current = (Doctor) doctor.getNext();
@@ -359,6 +362,8 @@ public class ClinicLL
                 }
             }
             else if (listName.equals("invoice")) {
+                System.out.println("| INVOICE");
+                System.out.println("+--------------------+----------------+");
                 Invoice current = (Invoice) invoice.getFirst();
                 while (counter != totalData) {
                         current = (Invoice) invoice.getNext();
@@ -372,6 +377,8 @@ public class ClinicLL
                 }
             }
             else if (listName.equals("medicine")) {
+                System.out.println("| MEDICINE");
+                System.out.println("+--------------------+----------------+");
                 Medicine current = (Medicine) medicine.getFirst();
                 while (counter != totalData) {
                         current = (Medicine) medicine.getNext();
@@ -389,47 +396,79 @@ public class ClinicLL
                 System.out.println(" Search or [C] Left, [V] Right, [H] Home");
                 System.out.println("+-------------------------------------+");
                 System.out.print(" Option : ");
-                char option = inChar.next().charAt(0);
-                if (option == 'C' || option == 'c') {
+                String option = inText.nextLine();
+                if (option.equalsIgnoreCase("C")) {
                     totalData -= 10;
                     currentPage--;
                 }
-                else if (option == 'V' || option == 'v') {
+                else if (option.equalsIgnoreCase("V")) {
                     totalData += 10;
                     currentPage++;
-                } else {
-                    break;
+                }
+                else if (option.equalsIgnoreCase("H")) {
+                    return 0;
+                }
+                else {
+                    try {
+                        return Integer.parseInt(option);
+                    }
+                    catch (NumberFormatException e) {
+                        return 0;
+                    }
                 }
             } else {
                 System.out.println(" Search or [V] Right, [H] Home : ");
                 System.out.println("+-------------------------------------+");
                 System.out.print(" Option : ");
-                char option = inChar.next().charAt(0);
-                if (option == 'V' || option == 'v') {
+                String option = inText.nextLine();
+                if (option.equalsIgnoreCase("V")) {
                     totalData += 10;
                     currentPage++;
-                } else {
+                }
+                else if (option.equalsIgnoreCase("H")) {
                     break;
+                }
+                else {
+                    try {
+                        return Integer.parseInt(option);
+                    }
+                    catch (NumberFormatException e) {
+                        return 0;
+                    }
                 }
             }
         }
         dashboard();
+        return 0; // testing
     }
     
-    public static void addAppointment() {
+    public static void addToList(String listName) {
         System.out.println("\f");
         System.out.println("+-------------------------------------+");
-        System.out.println("| ADD APPOINTMENTS");
-        System.out.println("+--------------------+----------------+");
-        System.out.print(" Enter NRIC : ");
-        String NRIC = inText.nextLine();
-        System.out.print(" Date (DD/MM/YYYY) : ");
-        String date = inText.nextLine();
-        System.out.print(" Time (24-hours format) : ");
-        String time = inText.nextLine();
-        System.out.print(" Type : ");
-        String type = inText.nextLine();
-        appointment.addLast(new Appointment(NRIC,date,time,type));
+        if (listName.equals("appointment")) {
+            System.out.println("| ADD APPOINTMENTS");
+            System.out.println("+--------------------+----------------+");
+            System.out.print(" Enter NRIC : ");
+            String NRIC = inText.nextLine();
+            System.out.print(" Date (DD/MM/YYYY) : ");
+            String date = inText.nextLine();
+            System.out.print(" Time (24-hours format) : ");
+            String time = inText.nextLine();
+            System.out.print(" Type : ");
+            String type = inText.nextLine();
+            appointment.addLast(new Appointment(NRIC,date,time,type));
+        }
+        else if (listName.equals("medicine")) {
+            System.out.println("| ADD MEDICINE");
+            System.out.println("+--------------------+----------------+");
+            System.out.print("Medicine Name : ");
+            String medName = inText.nextLine();
+            System.out.print("Price : ");
+            double price = inNum.nextDouble();
+            System.out.print("Type : ");
+            String type = inText.nextLine();
+            medicine.addLast(new Medicine(medName,price,type));
+        }
         System.out.println("+-------------------------------------+");
         System.out.println("| Data has been added!");
         System.out.println("+--------------------+----------------+");
@@ -437,20 +476,74 @@ public class ClinicLL
         String enter = inText.nextLine();
         dashboard();
     }
-    public static void editAppointment() {}
-    public static void deleteAppointment() {}
     
-    public static void editPatient() {}
+    public static void deleteFromList(String listName) {
+        if (listName.equals("appointment")) {
+            int option = viewList("appointment");
+            if (option == 0) {
+                return;
+            }
+            int counter = 1;
+            Appointment current = (Appointment) appointment.getFirst();
+            while (counter != option) {
+                current = (Appointment) appointment.getNext();
+                counter++;
+            }
+            System.out.print("\f");
+            System.out.println("+-------------------------------------+");
+            System.out.println("| Are you sure you want to delete this?");
+            System.out.println("+--------------------+----------------+");
+            System.out.println(" "+option+" ] "+current.toString());
+            System.out.print(" Option ([Y] Yes, [N] No) : ");
+            char deleteOrNot = inChar.next().charAt(0);
+            if (deleteOrNot == 'Y' || deleteOrNot == 'y') {
+                // delete
+                LinkedList tempAppt = new LinkedList();
+                counter = 1;
+                Appointment currentData = (Appointment) appointment.getFirst();
+                while (currentData != null) {
+                    if (counter == option) {
+                        currentData = (Appointment) appointment.getNext();
+                        counter++;
+                    }
+                    else {
+                        tempAppt.addLast(currentData);
+                        currentData = (Appointment) appointment.getNext();
+                        counter++;
+                    }
+                }
+                appointment.clear();
+                currentData = (Appointment) tempAppt.getFirst();
+                while (currentData != null) {
+                    appointment.addLast(currentData);
+                    currentData = (Appointment) tempAppt.getNext();
+                }
+                System.out.print("\f");
+                System.out.println("+-------------------------------------+");
+                System.out.println("| Data has been deleted!");
+                System.out.println("+--------------------+----------------+");
+                System.out.print(" Press [Enter] to continue");
+                String enter = inText.nextLine();
+            }
+            else {
+                deleteFromList("appointment");
+            }
+        }
+        else if (listName.equals("patient")) {
+            
+        }
+        else if (listName.equals("doctor")) {
+            
+        }
+        else if (listName.equals("invoice")) {
+            
+        }
+        else if (listName.equals("medicine")) {
+            
+        }
+        return;
+    }
     
-    // Doctor's Processes
-    public static void editDoctor() {}
-    
-    // Invoice's Processes
-    public static void editInvoice() {}
-    
-    // Medicine's Processes
-    public static void addMedicine() {}
-    public static void editMedicine() {}
-    public static void deleteMedicine() {}
+    public static void editList(String listName) {}
 }
 
