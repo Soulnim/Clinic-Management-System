@@ -23,6 +23,10 @@ public class ClinicLL
     static LinkedList invoice = new LinkedList();
     static LinkedList medicine = new LinkedList();
     
+    static String security_key = "CMS12345";
+    static String password = "cms@12345";
+    static int access_granted = 2;
+    
     public static void main(String args[]) {
         // Fetch data from clinic.txt
         try {
@@ -72,11 +76,13 @@ public class ClinicLL
         catch(Exception e) { System.err.println(e.getMessage()); }
         // Main processes
         while (true) {
-            boolean access_granted = login();
-            if (access_granted) {
+            access_granted = login();
+            if (access_granted == 1) {
                 // Dashboard
                 dashboard();
-                break; // temp, delete this after testing
+            }
+            else if (access_granted == 0) {
+                break;
             }
         }
         // Store data to clinicdata.txt
@@ -115,7 +121,41 @@ public class ClinicLL
     }
     
     // Login system, return either true/false
-    public static boolean login() { return true; }
+    public static int login() {
+        System.out.print("\f");
+        System.out.println("+-------------------------------------+");
+        System.out.println("| CMS LOGIN");
+        System.out.println("+--------------------+----------------+");
+        System.out.print(" Enter security key ('0' to exit) : ");
+        String secKey = inText.nextLine();
+        if (secKey.equals("0")) {
+            System.out.print("\f");
+            System.out.println("+-------------------------------------+");
+            System.out.println("| Session terminated. See you again!");
+            System.out.println("+--------------------+----------------+");
+            return 0;
+        }
+        System.out.print(" Enter password : ");
+        String pass = inText.nextLine();
+        if (secKey.equals(security_key) && pass.equals(password)) {
+            System.out.print("\f");
+            System.out.println("+-------------------------------------+");
+            System.out.println("| Logged in successfully!");
+            System.out.println("+--------------------+----------------+");
+            System.out.print(" Press [Enter] to continue");
+            String enter = inText.nextLine();
+            return 1;
+        }
+        else {
+            System.out.print("\f");
+            System.out.println("+-------------------------------------+");
+            System.out.println("| Invalid security key or password!");
+            System.out.println("+--------------------+----------------+");
+            System.out.print(" Press [Enter] to continue");
+            String enter = inText.nextLine();
+            return 2;
+        }
+    }
     
     // Dashboard
     public static void dashboard() {
@@ -286,6 +326,7 @@ public class ClinicLL
             System.out.print(" Option : ");
             char option_logout = inChar.next().charAt(0);
             if (option_logout == 'Y' || option_logout ==  'y') {
+                access_granted = 2;
                 return;
             } else {
                 dashboard();
