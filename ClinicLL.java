@@ -77,11 +77,10 @@ public class ClinicLL
         // Main processes
         while (true) {
             access_granted = login();
-            if (access_granted == 1) {
-                // Dashboard
+            while (access_granted == 1) {
                 dashboard();
             }
-            else if (access_granted == 0) {
+            if (access_granted == 0) {
                 break;
             }
         }
@@ -518,9 +517,6 @@ public class ClinicLL
         dashboard();
     }
     
-    // ERROR
-    // after user had done editing an instance, if the user want to go back
-    // the system will also shutdown
     public static void editList(String listName) {
         boolean isEdit = false;
         if (listName.equals("appointment")) {
