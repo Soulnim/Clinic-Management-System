@@ -1,0 +1,62 @@
+Appointment;A01;P02;D02;I76;01/05/2023;0930;Dental Checkup
+Appointment;A02;P11;D01;I54;02/15/2023;1430;Physical Therapy
+Appointment;A03;P02;D02;I32;03/20/2023;1100;Eye Examination
+Appointment;A04;P03;D03;I98;04/08/2023;0800;Cardiology Consultation
+Appointment;A05;P04;D02;I76;05/12/2023;1015;Pediatric Checkup
+Appointment;A06;P05;D01;I54;06/25/2023;1345;Dermatology Appointment
+Appointment;A07;P06;D02;I32;07/03/2023;1545;Orthopedic Consultation
+Appointment;A08;P02;D04;I98;08/19/2023;0915;Gynecology Appointment
+Appointment;A09;P05;D01;I54;09/10/2023;1200;Urology Consultation
+Appointment;A10;P11;D02;I76;10/28/2023;0830;Neurology Checkup
+Appointment;A11;P03;D06;I98;11/15/2023;1115;ENT Consultation
+Appointment;A12;P05;D03;I32;12/05/2023;1415;Rheumatology Appointment
+Appointment;A13;P09;D02;I54;01/02/2024;0945;Psychiatry Consultation
+Appointment;A14;P10;D01;I76;02/18/2024;1230;Allergy Testing
+Appointment;A15;P08;D03;I98;03/07/2024;1600;Nutrition Consultation
+Doctor;D01;Dr. Smith;Cardiology;555-1234
+Doctor;D02;Dr. Johnson;Dermatology;555-5678
+Doctor;D03;Dr. Williams;Orthopedics;555-9876
+Doctor;D04;Dr. Brown;Pediatrics;555-4321
+Doctor;D05;Dr. Davis;Neurology;555-8765
+Doctor;D06;Dr. Miller;Gynecology;555-2109
+Doctor;D07;Dr. Wilson;ENT;555-6543
+Doctor;D08;Dr. Moore;Urology;555-3210
+Doctor;D09;Dr. Taylor;Ophthalmology;555-7890
+Doctor;D10;Dr. Anderson;Psychiatry;555-2345
+Patient;P01;A1234567;John Doe
+Patient;P02;B9876543;Jane Smith
+Patient;P03;C8765432;Michael Johnson
+Patient;P04;D7654321;Emily Davis
+Patient;P05;E6543210;Daniel Wilson
+Patient;P06;F5432109;Sophia Brown
+Patient;P07;G4321098;Oliver Taylor
+Patient;P08;H3210987;Ava Moore
+Patient;P09;I2109876;Logan Anderson
+Patient;P10;J1098765;Grace Wilson
+Patient;P11;K0987654;Mia Miller
+Invoice;I001;A01;120.5;Credit Card
+Invoice;I002;A02;75.2;Cash
+Invoice;I003;A03;200.0;Insurance
+Invoice;I004;A04;150.75;Debit Card
+Invoice;I005;A05;80.9;Cash
+Invoice;I006;A06;300.25;Insurance
+Invoice;I007;A07;50.0;Credit Card
+Invoice;I008;A08;95.6;Debit Card
+Invoice;I009;A09;180.3;Cash
+Invoice;I010;A10;125.9;Insurance
+Invoice;I011;A11;70.5;Debit Card
+Invoice;I012;A12;210.75;Cash
+Invoice;I013;A13;150.2;Credit Card
+Invoice;I014;A14;185.4;Insurance
+Invoice;I015;A15;120.0;Cash
+Medicine;M001;Aspirin;Bottle, 100 tablets;PharmaCo;5.99
+Medicine;M002;Ibuprofen;Box, 50 capsules;MediCorp;8.5
+Medicine;M003;Paracetamol;Packet, 20 tablets;HealthMeds;3.75
+Medicine;M004;Amoxicillin;Bottle, 30 capsules;BioPharma;12.25
+Medicine;M005;Loratadine;Box, 25 tablets;WellnessDrugs;6.99
+Medicine;M006;Omeprazole;Packet, 14 capsules;MediCare;9.95
+Medicine;M007;Ciprofloxacin;Bottle, 40 tablets;PharmaCure;14.5
+Medicine;M008;Diazepam;Box, 10 tablets;ReliefMeds;7.2
+Medicine;M009;Simvastatin;Packet, 30 tablets;HeartHealth;15.75
+Medicine;M010;Sertraline;Bottle, 60 capsules;MindMeds;18.9
+Medicine;M011;Metformin;Box, 100 tablets;DiabetesCare;11.25
