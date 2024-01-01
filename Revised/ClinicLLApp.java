@@ -20,6 +20,7 @@ public class ClinicLLApp
     static LinkedList patient = new LinkedList();
     static LinkedList invoice = new LinkedList();
     static LinkedList medicine = new LinkedList();
+    static LinkedList service = new LinkedList();
     
     static int sessionCode = 0;
     // 0 - not logged in
@@ -67,7 +68,12 @@ public class ClinicLLApp
                     invoice.addLast(new Invoice(invID,appID,amount,payMethod));
                 }
                 else if (dataType.equals("Medicine")) {
-                    // to be determined
+                    String medID = data.nextToken();
+                    String medName = data.nextToken();
+                    String packDesc = data.nextToken();
+                    String manufacturer = data.nextToken();
+                    double price = Double.parseDouble(data.nextToken());
+                    medicine.addLast(new Medicine(medID,medName,packDesc,manufacturer,price));
                 }
                 else {
                     System.out.println("Data fetching error!");
@@ -113,7 +119,7 @@ public class ClinicLLApp
             }
             Medicine currentMed = (Medicine) medicine.getFirst();
             while (currentMed != null) {
-                // fw.write(currentMed.rawData());
+                fw.write(currentMed.rawData()+"\n");
                 currentMed = (Medicine) medicine.getNext();
             }
             // close file write
@@ -259,7 +265,7 @@ public class ClinicLLApp
                     counter++;
                 }
             }
-            else {
+            else if (listCode == 'D' || listCode =='d') {
                 int counter = 0;
                 System.out.print("\f");
                 System.out.println("+--------------------------------------+");
@@ -277,21 +283,40 @@ public class ClinicLLApp
                     counter++;
                 }
             }
+            else if (listCode == 'E' || listCode =='e') {
+                int counter = 0;
+                System.out.print("\f");
+                System.out.println("+--------------------------------------+");
+                System.out.println("|              Medicine                |");
+                System.out.println("+--------------------------------------+");
+                Medicine current = (Medicine) medicine.getFirst();
+                while (counter != dataFloor) {
+                    current = (Medicine) medicine.getNext();
+                    counter++;
+                }
+                while (current != null && counter < (10*currentPage)) {
+                    System.out.println(" "+(counter+1)+" ] "+current.getMedicineID()+" | "+current.getPackagingDesc()+" | RM "+current.getPrice());
+                    System.out.println("+--------------------------------------+");
+                    current = (Medicine) medicine.getNext();
+                    counter++;
+                }
+            }
             
             // traversing through pages
             if (currentPage == 1) {
                 System.out.println(" [S] Search - [V] Next Page - [H] Home");
-                System.out.println("+--------------------------------------+");
             }
             else if (currentPage > 1) {
                 System.out.println(" [S] Search - [C] Previous Page - [V] Next Page - [H] Home");
-                System.out.println("+--------------------------------------+");
             }
+            System.out.println("+--------------------------------------+");
+            System.out.println("|          [A] Add new data            |");
+            System.out.println("+--------------------------------------+");
             System.out.print(" Option : ");
             String option = inText.nextLine();
             System.out.println("+--------------------------------------+");
             if (option.equalsIgnoreCase("S")) {
-                // to be determined
+                search(listCode);
             }
             else if (option.equalsIgnoreCase("C")) {
                 currentPage--;
@@ -303,6 +328,9 @@ public class ClinicLLApp
             }
             else if (option.equalsIgnoreCase("H")) {
                 break;
+            }
+            else if (option.equalsIgnoreCase("A")) {
+                addData(listCode);
             }
             else {
                 try {
@@ -320,6 +348,18 @@ public class ClinicLLApp
         }
     }
     
+    // 'ADD' PROCESS
+    public static void addData(char listCode) {
+        System.out.print("\f");
+        System.out.println("+--------------------------------------+");
+        System.out.println("|         Data added to list!          |");
+        System.out.println("+--------------------------------------+");
+        System.out.print(" Press [Enter] to continue");
+        String enter = inText.nextLine();
+        // to be modified
+    }
+    
+    // GET SPECIFIC DATA
     public static void getData(char listCode, int key) {
         while (true) {
             if (listCode == 'A' || listCode == 'a') {
@@ -328,32 +368,43 @@ public class ClinicLLApp
                 System.out.println("|           Appointments               |");
                 System.out.println("+--------------------------------------+");
                 int counter = 1;
-                Appointment current = (Appointment) appointment.getFirst();
+                Appointment currentApp = (Appointment) appointment.getFirst();
                 while (counter != key) {
-                    current = (Appointment) appointment.getNext();
+                    currentApp = (Appointment) appointment.getNext();
                     counter++;
                 }
-                System.out.println(current.toString2());
-                System.out.println("+--------------------------------------+");
-                Doctor currentDoc = (Doctor) searchDataByID(current.getDoctorID());
-                System.out.println(currentDoc.toString2());
-                System.out.println("+--------------------------------------+");
-                Patient currentPat = (Patient) searchDataByID(current.getPatientID());
-                System.out.println(currentPat.toString2());
-                System.out.println("+--------------------------------------+");
-                System.out.println("|    [1] Edit  [2] Delete  [3] Back    |");
-                System.out.println("+--------------------------------------+");
-                System.out.print(" Option : ");
-                int option = inNum.nextInt();
-                if (option == 1) {
-                    editList(listCode);
-                }
-                else if (option == 2) {
-                    deleteFromList(listCode);
+                if (currentApp == null) {
+                    System.out.println("|        Data is not found!            |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                    break;
                 }
                 else {
-                    // to be determined
-                    return;
+                    System.out.println(currentApp.toString2());
+                    System.out.println("+--------------------------------------+");
+                    Doctor currentDoc = (Doctor) getDataByID(currentApp.getDoctorID());
+                    System.out.println(currentDoc.toString2());
+                    System.out.println("+--------------------------------------+");
+                    Patient currentPat = (Patient) getDataByID(currentApp.getPatientID());
+                    System.out.println(currentPat.toString2());
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|    [1] Edit  [2] Delete  [3] Back    |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Option : ");
+                    int option = inNum.nextInt();
+                    if (option == 1) {
+                        editList(listCode,currentApp,currentPat,currentDoc,null,null);
+                    }
+                    else if (option == 2) {
+                        if (deleteFromList(listCode,currentApp,currentPat,currentDoc,null,null)) {
+                            return;
+                        }
+                    }
+                    else {
+                        // to be determined
+                        return;
+                    }
                 }
             }
             else if (listCode == 'B' || listCode == 'b') {
@@ -362,17 +413,38 @@ public class ClinicLLApp
                 System.out.println("|             PATIENTS                 |");
                 System.out.println("+--------------------------------------+");
                 int counter = 1;
-                Patient current = (Patient) patient.getFirst();
+                Patient currentPat = (Patient) patient.getFirst();
                 while (counter != key) {
-                    current = (Patient) patient.getNext();
+                    currentPat = (Patient) patient.getNext();
                     counter++;
                 }
-                System.out.println(current.toString2());
-                System.out.println("+--------------------------------------+");
-                System.out.println("|      Press [Enter] to continue       |");
-                System.out.println("+--------------------------------------+");
-                String enter = inText.nextLine();
-                return;
+                if (currentPat != null) {
+                    System.out.println(currentPat.toString2());
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|    [1] Edit  [2] Delete  [3] Back    |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Option : ");
+                    int option = inNum.nextInt();
+                    if (option == 1) {
+                        editList(listCode,null,currentPat,null,null,null);
+                    }
+                    else if (option == 2) {
+                        if (deleteFromList(listCode,null,currentPat,null,null,null)) {
+                            return;
+                        }
+                    }
+                    else {
+                        // to be determined
+                        return;
+                    }
+                }
+                else {
+                    System.out.println("|        Data is not found!            |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                    break;
+                }
             }
             else if (listCode == 'C' || listCode == 'c') {
                 System.out.print("\f");
@@ -380,17 +452,77 @@ public class ClinicLLApp
                 System.out.println("|              DOCTOR                  |");
                 System.out.println("+--------------------------------------+");
                 int counter = 1;
-                Doctor current = (Doctor) doctor.getFirst();
+                Doctor currentDoc = (Doctor) doctor.getFirst();
                 while (counter != key) {
-                    current = (Doctor) doctor.getNext();
+                    currentDoc = (Doctor) doctor.getNext();
                     counter++;
                 }
-                System.out.println(current.toString2());
+                if (currentDoc != null) {
+                    System.out.println(currentDoc.toString2());
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|    [1] Edit  [2] Delete  [3] Back    |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Option : ");
+                    int option = inNum.nextInt();
+                    if (option == 1) {
+                        editList(listCode,null,null, currentDoc,null,null);
+                    }
+                    else if (option == 2) {
+                        if (deleteFromList(listCode,null,null,currentDoc,null,null)) {
+                            return;
+                        }
+                    }
+                    else {
+                        // to be determined
+                        return;
+                    }
+                }
+                else {
+                    System.out.println("|        Data is not found!            |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                    break;
+                }
+            }
+            else if (listCode == 'E' || listCode == 'e') {
+                System.out.print("\f");
                 System.out.println("+--------------------------------------+");
-                System.out.println("|      Press [Enter] to continue       |");
+                System.out.println("|             MEDICINE                 |");
                 System.out.println("+--------------------------------------+");
-                String enter = inText.nextLine();
-                return;
+                int counter = 1;
+                Medicine currentMed = (Medicine) medicine.getFirst();
+                while (counter != key) {
+                    currentMed = (Medicine) medicine.getNext();
+                    counter++;
+                }
+                if (currentMed != null) {
+                    System.out.println(currentMed.toString2());
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|    [1] Edit  [2] Delete  [3] Back    |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Option : ");
+                    int option = inNum.nextInt();
+                    if (option == 1) {
+                        editList(listCode,null,null,null,null,currentMed);
+                    }
+                    else if (option == 2) {
+                        if (deleteFromList(listCode,null,null,null,null,currentMed)) {
+                            return;
+                        }
+                    }
+                    else {
+                        // to be determined
+                        return;
+                    }
+                }
+                else {
+                    System.out.println("|        Data is not found!            |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                    break;
+                }
             }
             else if (listCode == 'D' || listCode == 'd') {
                 System.out.print("\f");
@@ -398,20 +530,41 @@ public class ClinicLLApp
                 System.out.println("|             INVOICE                  |");
                 System.out.println("+--------------------------------------+");
                 int counter = 1;
-                Invoice current = (Invoice) invoice.getFirst();
+                Invoice currentInv = (Invoice) invoice.getFirst();
                 while (counter != key) {
-                    current = (Invoice) invoice.getNext();
+                    currentInv = (Invoice) invoice.getNext();
                     counter++;
                 }
-                System.out.println(current.toString2());
-                System.out.println("+--------------------------------------+");
-                Appointment currentApp = (Appointment) searchDataByID(current.getAppID());
-                System.out.println(currentApp.toString2());
-                System.out.println("+--------------------------------------+");
-                System.out.println("|      Press [Enter] to continue       |");
-                System.out.println("+--------------------------------------+");
-                String enter = inText.nextLine();
-                return;
+                if (currentInv != null) {
+                    System.out.println(currentInv.toString2());
+                    System.out.println("+--------------------------------------+");
+                    Appointment currentApp = (Appointment) getDataByID(currentInv.getAppID());
+                    System.out.println(currentApp.toString2());
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|    [1] Edit  [2] Delete  [3] Back    |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Option : ");
+                    int option = inNum.nextInt();
+                    if (option == 1) {
+                        editList(listCode,currentApp,null,null,currentInv,null);
+                    }
+                    else if (option == 2) {
+                        if (deleteFromList(listCode,currentApp,null,null,currentInv,null)) {
+                            return;
+                        }
+                    }
+                    else {
+                        // to be determined
+                        return;
+                    }
+                }
+                else {
+                    System.out.println("|        Data is not found!            |");
+                    System.out.println("+--------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                    break;
+                }
             }
             else {
                 // to be determined
@@ -419,7 +572,7 @@ public class ClinicLLApp
         }
     }
     
-    public static Object searchDataByID(String key) {
+    public static Object getDataByID(String key) {
         Appointment current1 = (Appointment) appointment.getFirst();
         while (current1 != null) {
             if (current1.getAppID().equals(key)) {
@@ -444,24 +597,364 @@ public class ClinicLLApp
         return null;
     }
     
-    public static Object search(char listCode, String key) {
-        // to be determined
-        return null;
+    public static Object search(char listCode) {
+        while (true) {
+            LinkedList dataMatched = new LinkedList();
+            int totalMatched = 0;
+            if (listCode == 'A' || listCode == 'a') {
+                // to be determined
+            }
+            else if (listCode == 'B' || listCode == 'b') {
+                // to be determined
+            }
+            else if (listCode == 'C' || listCode == 'c') {
+                // to be determined
+            }
+            else if (listCode == 'D' || listCode == 'd') {
+                // to be determined
+            }
+        }
     }
     
-    public static void editList(char listCode) {
-        System.out.println("+--------------------------------------+");
-        System.out.println("|              EDIT LIST               |");
-        System.out.println("+--------------------------------------+");
-        System.out.print(" Press [Enter] to continue");
-        String enter = inText.nextLine();
+    public static void editList(char listCode, Appointment cA, Patient cP,Doctor cD,Invoice cI,Medicine cM) {
+        while (true) {
+            System.out.print("\f");
+            System.out.println("+--------------------------------------+");
+            System.out.println("|              EDIT DATA               |");
+            System.out.println("+--------------------------------------+");
+            if (listCode == 'A' || listCode == 'a') {
+                System.out.println(cP.toString2());
+                System.out.println("+--------------------------------------+");
+                System.out.println(cP.toString2());
+                System.out.println("+--------------------------------------+");
+                System.out.println(" 1] Edit Date");
+                System.out.println(" 2] Edit Time");
+                System.out.println(" 3] Edit Type");
+                System.out.println(" 4] Edit NRIC");
+                System.out.println(" 5] Back");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Option : ");
+                int option = inNum.nextInt();
+                if (option == 1) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      Date Edited                     |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 2) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      Time edited                     |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 3) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      Type edited                     |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 4) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      NRIC edited                     |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 5) {
+                    break;
+                }
+            }
+            else if (listCode == 'B' || listCode == 'b') {
+                System.out.println(cP.toString2());
+                System.out.println("+--------------------------------------+");
+                System.out.println(" 1] Edit NRIC");
+                System.out.println(" 2] Edit Name");
+                System.out.println(" 3] Back");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Option : ");
+                int option = inNum.nextInt();
+                if (option == 1) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      NRIC Edited                     |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 2) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      Name edited                     |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 3) {
+                    break;
+                }
+            }
+            else if (listCode == 'C' || listCode == 'c') {
+                System.out.println(cD.toString2());
+                System.out.println("+--------------------------------------+");
+                System.out.println(" 1] Edit Name");
+                System.out.println(" 2] Edit Phone Number");
+                System.out.println(" 3] Back");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Option : ");
+                int option = inNum.nextInt();
+                if (option == 1) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      Name Edited                     |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 2) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      Phone Number Edited             |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 3) {
+                    break;
+                }
+            }
+            else if (listCode == 'D' || listCode == 'd') {
+                System.out.println(cI.toString2());
+                System.out.println("+--------------------------------------+");
+                System.out.println(" 1] Edit Amount");
+                System.out.println(" 2] Edit Payment Method");
+                System.out.println(" 3] Back");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Option : ");
+                int option = inNum.nextInt();
+                if (option == 1) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      Amount Edited                    |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 2) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      Payment Method Edited           |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 3) {
+                    break;
+                }
+            }
+            else if (listCode == 'E' || listCode == 'e') {
+                System.out.println(cM.toString2());
+                System.out.println("+--------------------------------------+");
+                System.out.println(" 1] Edit Packaging Desc");
+                System.out.println(" 2] Edit Price");
+                System.out.println(" 3] Back");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Option : ");
+                int option = inNum.nextInt();
+                if (option == 1) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      PackDesc Edited                 |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 2) {
+                    System.out.println("+--------------------------------------+");
+                    System.out.println("|      Price Edited                    |");
+                    System.out.println("|      Press [Enter] to continue       |");
+                    System.out.println("+--------------------------------------+");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 3) {
+                    break;
+                }
+            }
+        }
     }
     
-    public static void deleteFromList(char listCode) {
+    public static boolean deleteFromList(char listCode,Appointment cA,Patient cP,Doctor cD,Invoice cI,Medicine cM) {
+        System.out.print("\f");
         System.out.println("+--------------------------------------+");
-        System.out.println("|          DELETE FROM LIST            |");
+        System.out.println("|   Are you sure you want to delete?:  |");
         System.out.println("+--------------------------------------+");
-        System.out.print(" Press [Enter] to continue");
-        String enter = inText.nextLine();
+        if (listCode == 'A' || listCode == 'a') {
+            System.out.println(cA.toString2());
+            System.out.println("+--------------------------------------+");
+            System.out.println(cP.toString2());
+            System.out.println("+--------------------------------------+");
+            System.out.println(cD.toString2());
+            System.out.println("+--------------------------------------+");
+            System.out.println("+          [Y] Yes, [N] No             +");
+            System.out.println("+--------------------------------------+");
+            System.out.print(" Option : ");
+            char option = inChar.next().charAt(0);
+            if (option == 'Y' || option == 'y') {
+
+                LinkedList temp = new LinkedList();
+                Appointment current = (Appointment) appointment.getFirst();
+                while (current != null) {
+                    if (!current.getAppID().equals(cA.getAppID())) {
+                        temp.addLast(current);
+                    }
+                    current = (Appointment) appointment.getNext();
+                }
+                appointment.clear();
+                current = (Appointment) temp.getFirst();
+                while (current != null) {
+                    appointment.addLast(current);
+                    current = (Appointment) temp.getNext();
+                }
+                System.out.println("+--------------------------------------+");
+                System.out.println("+        Data has been deleted         +");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Press [Enter] to continue");
+                String enter = inText.nextLine();
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else if (listCode == 'B' || listCode == 'b') {
+            System.out.println(cP.toString2());
+            System.out.println("+--------------------------------------+");
+            System.out.println("+          [Y] Yes, [N] No             +");
+            System.out.println("+--------------------------------------+");
+            System.out.print(" Option : ");
+            char option = inChar.next().charAt(0);
+            if (option == 'Y' || option == 'y') {
+                System.out.println("+--------------------------------------+");
+                System.out.println("+        Data has been deleted         +");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Press [Enter] to continue");
+                String enter = inText.nextLine();
+                LinkedList temp = new LinkedList();
+                Patient current = (Patient) patient.getFirst();
+                while (current != null) {
+                    if (!current.getPatientID().equals(cP.getPatientID())) {
+                        temp.addLast(current);
+                    }
+                    current = (Patient) patient.getNext();
+                }
+                patient.clear();
+                current = (Patient) temp.getFirst();
+                while (current != null) {
+                    patient.addLast(current);
+                    current = (Patient) temp.getNext();
+                }
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else if (listCode == 'C' || listCode == 'c') {
+            System.out.println(cD.toString2());
+            System.out.println("+--------------------------------------+");
+            System.out.println("+          [Y] Yes, [N] No             +");
+            System.out.println("+--------------------------------------+");
+            System.out.print(" Option : ");
+            char option = inChar.next().charAt(0);
+            if (option == 'Y' || option == 'y') {
+                System.out.println("+--------------------------------------+");
+                System.out.println("+        Data has been deleted         +");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Press [Enter] to continue");
+                String enter = inText.nextLine();
+                LinkedList temp = new LinkedList();
+                Doctor current = (Doctor) doctor.getFirst();
+                while (current != null) {
+                    if (!current.getDoctorID().equals(cA.getDoctorID())) {
+                        temp.addLast(current);
+                    }
+                    current = (Doctor) doctor.getNext();
+                }
+                doctor.clear();
+                current = (Doctor) temp.getFirst();
+                while (current != null) {
+                    doctor.addLast(current);
+                    current = (Doctor) temp.getNext();
+                }
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+        else if (listCode == 'D' || listCode == 'd') {
+            System.out.println(cI.toString2());
+            System.out.println("+--------------------------------------+");
+            System.out.println("+          [Y] Yes, [N] No             +");
+            System.out.println("+--------------------------------------+");
+            System.out.print(" Option : ");
+            char option = inChar.next().charAt(0);
+            if (option == 'Y' || option == 'y') {
+                System.out.println("+--------------------------------------+");
+                System.out.println("+        Data has been deleted         +");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Press [Enter] to continue");
+                String enter = inText.nextLine();
+                LinkedList temp = new LinkedList();
+                Invoice current = (Invoice) invoice.getFirst();
+                while (current != null) {
+                    if (!current.getInvoiceID().equals(cA.getInvoiceID())) {
+                        temp.addLast(current);
+                    }
+                    current = (Invoice) invoice.getNext();
+                }
+                invoice.clear();
+                current = (Invoice) temp.getFirst();
+                while (current != null) {
+                    invoice.addLast(current);
+                    current = (Invoice) temp.getNext();
+                }
+                return true;
+            }
+            
+            else {
+                return false;
+            }
+        }
+        else if (listCode == 'E' || listCode == 'e') {
+            System.out.println(cM.toString2());
+            System.out.println("+--------------------------------------+");
+            System.out.println("+          [Y] Yes, [N] No             +");
+            System.out.println("+--------------------------------------+");
+            System.out.print(" Option : ");
+            char option = inChar.next().charAt(0);
+            if (option == 'Y' || option == 'y') {
+                System.out.println("+--------------------------------------+");
+                System.out.println("+        Data has been deleted         +");
+                System.out.println("+--------------------------------------+");
+                System.out.print(" Press [Enter] to continue");
+                String enter = inText.nextLine();
+                LinkedList temp = new LinkedList();
+                Medicine current = (Medicine) medicine.getFirst();
+                while (current != null) {
+                    if (!current.getMedicineID().equals(cM.getMedicineID())) {
+                        temp.addLast(current);
+                    }
+                    current = (Medicine) medicine.getNext();
+                }
+                medicine.clear();
+                current = (Medicine) temp.getFirst();
+                while (current != null) {
+                    medicine.addLast(current);
+                    current = (Medicine) temp.getNext();
+                }
+                return true;
+            }
+            
+            else {
+                return false;
+            }
+        }
+        return false;
     }
 }
