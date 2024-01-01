@@ -22,12 +22,24 @@ public class Medicine {
     public void setPrice(double price) {this.price=price;}
 
     // Getter/Accessor
-    public String getPaymentID() {return this.medicineName;}
+    public String getMedicineID() { return this.medicineID; }
+    public String getMedicineName() {return this.medicineName;}
+    public String getPackagingDesc() {return this.packagingDesc;}
+    public String getManufacturer() {return this.manufacturer;}
     public double getPrice() {return this.price;} 
     // to be determined
 
     // Printer
     public String toString(){
-        return "Name : "+this.medicineName+"Price : "+this.price; // to be determined
+        return " Name : "+this.medicineName+" | Price : "+this.price; // to be determined
+    }
+    public String toString2() {
+        return " Medicine ID : "+this.medicineID+
+            "\n Medicine Name : "+this.medicineName+" | Packaging Description : "+this.packagingDesc+
+            "\n Manufacturer : "+this.manufacturer+" | Price : "+this.price;
+    }
+    public String rawData() {
+        return "Medicine;"+this.medicineID+";"+this.medicineName+";"+this.packagingDesc+";"+
+            this.manufacturer+";"+this.price;
     }
 }
