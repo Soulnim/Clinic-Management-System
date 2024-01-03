@@ -30,7 +30,8 @@ public class ClinicLLApps
                     String docID = st.nextToken();
                     String date = st.nextToken();
                     String time = st.nextToken();
-                    appLL.addLast(new Appointment(appID,patID,docID,date,time));
+                    String status = st.nextToken();
+                    appLL.addLast(new Appointment(appID,patID,docID,date,time,status));
                 }
                 else if (dataType.equals("PATIENT")) {
                     String patID = st.nextToken();
@@ -160,6 +161,7 @@ public class ClinicLLApps
     public static void displayList(LinkedList list, LinkedList list2) {
         int page = 1;
         int floor = 0;
+        boolean showCompleted = true;
         while (true) {
             // Check for list type
             Object object = (Object) list.getFirst();
@@ -194,21 +196,55 @@ public class ClinicLLApps
             }
             
             int counter = 0;
+            // Check if the list is AppLL
             object = (Object) list.getFirst();
-            while (counter != floor) {
-                object = (Object) list.getNext();
-                counter++;
+            if (object instanceof Appointment) {
+                Appointment appObj = (Appointment) object;
+                while (counter != floor) {
+                    appObj = (Appointment) list.getNext();
+                    counter++;
+                }
+                while (appObj != null && counter < (page*10)) {
+                    if (showCompleted) {
+                        System.out.println(" "+(counter+1)+"] "+appObj.toString());
+                        System.out.println("+------------------------------------------+");
+                    }
+                    else {
+                        if (appObj.getStatus().equals("Pending")) {
+                            System.out.println(" "+(counter+1)+"] "+appObj.toString());
+                            System.out.println("+------------------------------------------+");
+                        }
+                    }
+                    appObj = (Appointment) list.getNext();
+                    counter++;
+                }
             }
-            while (object != null && counter < (page*10)) {
-                System.out.println(" "+(counter+1)+"] "+object.toString());
-                object = (Object) list.getNext();
-                counter++;
-                System.out.println("+------------------------------------------+");
+            else {
+                while (counter != floor) {
+                    object = (Object) list.getNext();
+                    counter++;
+                }
+                while (object != null && counter < (page*10)) {
+                    System.out.println(" "+(counter+1)+"] "+object.toString());
+                    object = (Object) list.getNext();
+                    counter++;
+                    System.out.println("+------------------------------------------+");
+                }
             }
             // Check total page
             System.out.println(" Enter index (1..) to choose -");
             if (page == 1) {
-                System.out.println(" [V] Next , [H] Home");
+                if (list.getFirst() instanceof Appointment) {
+                    if (showCompleted) {
+                        System.out.println(" [V] Next , [H] Home, [K] Hide \'Completed\'");
+                    }
+                    else {
+                        System.out.println(" [V] Next , [H] Home, [K] Show \'Completed\'");
+                    }
+                }
+                else {
+                    System.out.println(" [V] Next , [H] Home");
+                }
             }
             else {
                 System.out.println(" [C] Previous , [V] Next , [H] Home");
@@ -244,6 +280,16 @@ public class ClinicLLApps
             else if (option.equalsIgnoreCase("A")) {
                 if (list.getFirst() instanceof Appointment) {
                     addData(list,list2);
+                }
+            }
+            else if (option.equalsIgnoreCase("K")) {
+                if (list.getFirst() instanceof Appointment) {
+                    if (showCompleted) {
+                        showCompleted = false;
+                    }
+                    else {
+                        showCompleted = true;
+                    }
                 }
             }
             else {
@@ -422,7 +468,7 @@ public class ClinicLLApps
             System.out.println("+------------------------------------------+");
             System.out.println(doc.toStringFormatted());
             // add to list
-            list.addLast(new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,time));
+            list.addLast(new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,time,"Pending"));
             
             System.out.println("+------------------------------------------+");
             System.out.println("|           Data has been added!           |");
@@ -501,7 +547,7 @@ public class ClinicLLApps
                 System.out.println(" A] Date : "+appObj.getDate());
                 System.out.println(" B] Time : "+appObj.getTime());
                 System.out.println(" C] Assigned Doctor : "+docObj.getDocName());
-                System.out.println(" D] Back");
+                System.out.println(" E] Back");
                 System.out.println("+------------------------------------------+");
                 System.out.println(" Option : ");
                 char option = inChar.next().charAt(0);
