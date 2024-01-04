@@ -394,14 +394,18 @@ public class ClinicQApps
                 System.out.print(" Patient Name : ");
                 String patName = inText.nextLine();
                 pat = new Patient("P"+generateID(list),NRIC,patName);
-                patQueue.addLast(pat);
+                list2.enqueue(pat);
             } else {
-                Patient patObj = (Patient) list2.getFirst();
-                while (patObj != null) {
+                Queue temp = new Queue();
+                while (!list2.isEmpty()) {
+                    Patient patObj = (Patient) list2.dequeue();
                     if (patObj.getNRIC().equals(NRIC)) {
                         pat = patObj;
                     }
-                    patObj = (Patient) list2.getNext();
+                    temp.enqueue(patObj);
+                }
+                while(!temp.isEmpty()) {
+                    list2.enqueue(temp.dequeue());
                 }
                 System.out.println(" [Identical NRIC found!]");
                 System.out.println(" Patient Name : "+pat.getPatName());
@@ -417,23 +421,30 @@ public class ClinicQApps
                 System.out.println("+------------------------------------------+");
                 System.out.println("|      Choose a doctor to be assigned :    |");
                 System.out.println("+------------------------------------------+");
-                Doctor docObj = (Doctor) docQueue.getFirst();
-                while (docObj != null) {
+                Queue temp = new Queue();
+                while (!docQueue.isEmpty()) {
+                    Doctor docObj = (Doctor) docQueue.dequeue();
                     System.out.println(" "+(counter+1)+"]"+docObj.toStringFormatted());
-                    docObj = (Doctor) docQueue.getNext();
                     counter++;
                     System.out.println("+------------------------------------------+");
+                    temp.enqueue(docObj);
+                }
+                while(!temp.isEmpty()) {
+                    docQueue.enqueue(temp.dequeue());
                 }
                 System.out.print(" Option : ");
                 int option = inNum.nextInt();
                 if (option <= counter && option >= 0) {
-                    int counter2 = 1;
-                    docObj = (Doctor) docQueue.getFirst();
+                    int counter2 = 0;                    
                     while (counter2 < option) {
-                        docObj = (Doctor) docQueue.getNext();
+                        Doctor docObj = (Doctor) docQueue.dequeue();
                         counter2++;
+                        temp.enqueue(docObj);
+                        doc = docObj;
                     }
-                    doc = docObj;
+                    while(!temp.isEmpty()) {
+                        docQueue.enqueue(temp.dequeue());
+                    }
                     break;
                 }
                 else {
@@ -455,7 +466,7 @@ public class ClinicQApps
             System.out.println("+------------------------------------------+");
             System.out.println(doc.toStringFormatted());
             // add to list
-            list.addLast(new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,time,"Pending"));
+            list.enqueue(new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,time,"Pending"));
             
             System.out.println("+------------------------------------------+");
             System.out.println("|           Data has been added!           |");
@@ -467,14 +478,14 @@ public class ClinicQApps
     
     // GENERATE RANDOM NUMBER FOR ID
     public static int generateID(Queue list) {
-         Queue temp = new Queue();
+        Queue temp = new Queue();
         while (true) {
             if (list.getFront() instanceof Appointment) {
                 boolean isExist = false;
                 Random rand = new Random();
                 int randInt = rand.nextInt(100);
                 while (!list.isEmpty()) {
-                    Appointment appObj = (Appointment) appQueue.dequeue();
+                    Appointment appObj = (Appointment) list.dequeue();
                     int getID = Integer.parseInt(appObj.getAppID().substring(1));
                     if (getID == randInt) {
                         isExist = true;
@@ -514,7 +525,7 @@ public class ClinicQApps
     public static boolean patientIsExist(Queue list,String NRIC) {
         Queue temp = new Queue();
         while (!list.isEmpty()) {
-            Patient patObj = (Patient) patQueue.dequeue();
+            Patient patObj = (Patient) list.dequeue();
             if (patObj.getNRIC().equals(NRIC)) {
                 return true;
             }
