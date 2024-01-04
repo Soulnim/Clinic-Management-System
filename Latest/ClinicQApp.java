@@ -1,7 +1,7 @@
 import java.util.*;
 import java.io.*;
 
-public class ClinicQueueApps
+public class ClinicQApps
 {
     static Scanner inText = new Scanner(System.in);
     static Scanner inChar = new Scanner(System.in);
@@ -16,7 +16,7 @@ public class ClinicQueueApps
     static String SECURITY_KEY = "1"; // to be determined
     static String PASSWORD = "1"; // to be determined
     
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         // Fetch data from clinicdata.txt
         try {
             BufferedReader br = new BufferedReader(new FileReader("clinicdata.txt"));
@@ -31,19 +31,19 @@ public class ClinicQueueApps
                     String date = st.nextToken();
                     String time = st.nextToken();
                     String status = st.nextToken();
-                    appQueue.addLast(new Appointment(appID,patID,docID,date,time,status));
+                    appQueue.enqueue(new Appointment(appID,patID,docID,date,time,status));
                 }
                 else if (dataType.equals("PATIENT")) {
                     String patID = st.nextToken();
                     String NRIC = st.nextToken();
                     String patName = st.nextToken();
-                    patQueue.addLast(new Patient(patID,NRIC,patName));
+                    patQueue.enqueue(new Patient(patID,NRIC,patName));
                 }
                 else if (dataType.equals("DOCTOR")) {
                     String docID = st.nextToken();
                     String name = st.nextToken();
                     String specialty = st.nextToken();
-                    docQueue.addLast(new Doctor(docID,name,specialty));
+                    docQueue.enqueue(new Doctor(docID,name,specialty));
                 }
                 data = br.readLine();
             }
@@ -62,7 +62,7 @@ public class ClinicQueueApps
         
         // STORE Data back to clinicdata.txt
         try {
-            FileWriter fw = new FileWriter("clinicdata.txt");
+            FileWriter fw = new FileWriter("clinic.txt");
             while (!appQueue.isEmpty()) {
                 Appointment appObj = (Appointment) appQueue.dequeue();
                 fw.write(appObj.txtFormat()+"\n");
@@ -118,7 +118,7 @@ public class ClinicQueueApps
         }
     }
     
-    public static void dashboard(LinkedList appList,LinkedList patList,LinkedList docList) {
+    public static void dashboard(Queue appQueue, Queue patQueue, Queue docQueue) {
         System.out.print("\f");
         System.out.println("+------------------------------------------+");
         System.out.println("|                MAIN MENU                 |");
@@ -132,13 +132,13 @@ public class ClinicQueueApps
         System.out.print(" Option : ");
         char option = inChar.next().charAt(0);
         if (option == 'A' || option == 'a') {
-            displayList(appList,patList);
+            displayList(appQueue,patQueue);
         }
         else if (option == 'B' || option == 'b') {
-            displayList(patList,null);
+            displayList(patQueue,null);
         }
         else if (option == 'C' || option == 'c') {
-            displayList(docList,null);
+            displayList(docQueue,null);
         }
         else if (option == 'D' || option == 'd') {
             // to be determined
@@ -155,34 +155,32 @@ public class ClinicQueueApps
         }
     }
     
-    public static void displayList(LinkedList list, LinkedList list2) {
+    public static void displayList(Queue queue, Queue queue2) {
         int page = 1;
         int floor = 0;
         boolean showCompleted = true;
+        
         while (true) {
-            // Check for list type
-            Object object = (Object) list.getFirst();
+            // Check for queue type
+            Object object = (Object) queue.getFront();
             if (object != null) {
                 if (object instanceof Appointment) {
                     System.out.print("\f");
                     System.out.println("+------------------------------------------+");
                     System.out.println("|             APPOINTMENT LIST             |");
                     System.out.println("+------------------------------------------+");
-                }
-                else if (object instanceof Patient) {
+                } else if (object instanceof Patient) {
                     System.out.print("\f");
                     System.out.println("+------------------------------------------+");
                     System.out.println("|               PATIENT LIST               |");
                     System.out.println("+------------------------------------------+");
-                }
-                else if (object instanceof Doctor) {
+                } else if (object instanceof Doctor) {
                     System.out.print("\f");
                     System.out.println("+------------------------------------------+");
                     System.out.println("|                DOCTOR LIST               |");
                     System.out.println("+------------------------------------------+");
                 }
-            }
-            else {
+            } else {
                 System.out.print("\f");
                 System.out.println("+------------------------------------------+");
                 System.out.println("|              List is empty!              |");
@@ -191,110 +189,108 @@ public class ClinicQueueApps
                 String enter = inText.nextLine();
                 return;
             }
-            
+
             int counter = 0;
-            // Check if the list is AppLL
-            object = (Object) list.getFirst();
+            // Check if the queue is appQueue
+            object = (Object) queue.getFront();
             if (object instanceof Appointment) {
-                Appointment appObj = (Appointment) object;
-                while (counter != floor) {
-                    appObj = (Appointment) list.getNext();
+                Queue tempApp = new Queue();
+                Queue tempPat = new Queue();
+                while (!queue.isEmpty() && counter != floor) {
+                    Object current = (Object) queue.dequeue();
+                    tempApp.enqueue(current);
                     counter++;
                 }
-                while (appObj != null && counter < (page*10)) {
-                    if (showCompleted) {
-                        System.out.println(" "+(counter+1)+"] "+appObj.toString());
+                while (!queue.isEmpty() && counter < (page * 10)) {
+                    Appointment appObj = (Appointment) queue.dequeue();
+                    tempApp.enqueue(appObj);
+                    if (showCompleted || appObj.getStatus().equals("Pending")) {
+                        System.out.println(" " + (counter + 1) + "] " + appObj.toString());
                         System.out.println("+------------------------------------------+");
                     }
-                    else {
-                        if (appObj.getStatus().equals("Pending")) {
-                            System.out.println(" "+(counter+1)+"] "+appObj.toString());
-                            System.out.println("+------------------------------------------+");
-                        }
-                    }
-                    appObj = (Appointment) list.getNext();
                     counter++;
                 }
-            }
-            else {
-                while (counter != floor) {
-                    object = (Object) list.getNext();
+                // store temp's data back to its original list
+                while (!tempApp.isEmpty()) {
+                    queue.enqueue(tempApp.dequeue());
+                }
+                while (!tempPat.isEmpty()) {
+                    queue2.enqueue(tempPat.dequeue());
+                }
+            } else {
+                Queue temp = new Queue();
+                while (!queue.isEmpty() && counter != floor) {
+                    Object current = queue.dequeue();
+                    temp.enqueue(current);
                     counter++;
                 }
-                while (object != null && counter < (page*10)) {
-                    System.out.println(" "+(counter+1)+"] "+object.toString());
-                    object = (Object) list.getNext();
+                while (!queue.isEmpty() && counter < (page * 10)) {
+                    object = queue.dequeue();
+                    temp.enqueue(object);
+                    System.out.println(" " + (counter + 1) + "] " + object.toString());
                     counter++;
                     System.out.println("+------------------------------------------+");
                 }
+                // store temp's data back to its original list
+                while (!temp.isEmpty()) {
+                    queue.enqueue(temp.dequeue());
+                }
             }
+
             // Check total page
             System.out.println(" Enter index (1..) to choose -");
             if (page == 1) {
-                if (list.getFirst() instanceof Appointment) {
+                if (object instanceof Appointment) {
                     if (showCompleted) {
-                        System.out.println(" [V] Next , [H] Home, [K] Hide \'Completed\'");
+                        System.out.println(" [V] Next , [H] Home, [K] Hide 'Completed'");
+                    } else {
+                        System.out.println(" [V] Next , [H] Home, [K] Show 'Completed'");
                     }
-                    else {
-                        System.out.println(" [V] Next , [H] Home, [K] Show \'Completed\'");
-                    }
-                }
-                else {
+                } else {
                     System.out.println(" [V] Next , [H] Home");
                 }
-            }
-            else {
+            } else {
                 System.out.println(" [C] Previous , [V] Next , [H] Home");
             }
-            System.out.println("+------------------------------------------+ Page : "+page);
-            // Determine wether its is addable or not
-            if (list.getFirst() instanceof Appointment) {
+            System.out.println("+------------------------------------------+ Page : " + page);
+
+            // Determine whether it is addable or not
+            if (object instanceof Appointment) {
                 System.out.println("|             [A] Add new data             |");
                 System.out.println("+------------------------------------------+");
             }
+
             System.out.print(" Option : ");
             String option = inText.nextLine();
             if (option.equalsIgnoreCase("V")) {
                 page++;
-                floor+=10;
-            }
-            else if (option.equalsIgnoreCase("C")) {
-                if (page-1<1) {
+                floor += 10;
+            } else if (option.equalsIgnoreCase("C")) {
+                if (page - 1 < 1) {
                     System.out.println("+------------------------------------------+");
                     System.out.println("|            Page limit reached!           |");
                     System.out.println("+------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
-                }
-                else {
+                } else {
                     page--;
-                    floor-=10;
+                    floor -= 10;
                 }
-            }
-            else if (option.equalsIgnoreCase("H")) {
+            } else if (option.equalsIgnoreCase("H")) {
                 break;
-            }
-            else if (option.equalsIgnoreCase("A")) {
-                if (list.getFirst() instanceof Appointment) {
-                    addData(list,list2);
+            } else if (option.equalsIgnoreCase("A")) {
+                if (object instanceof Appointment) {
+                    addData(queue, queue2);
                 }
-            }
-            else if (option.equalsIgnoreCase("K")) {
-                if (list.getFirst() instanceof Appointment) {
-                    if (showCompleted) {
-                        showCompleted = false;
-                    }
-                    else {
-                        showCompleted = true;
-                    }
+            } else if (option.equalsIgnoreCase("K")) {
+                if (object instanceof Appointment) {
+                    showCompleted = !showCompleted;
                 }
-            }
-            else {
+            } else {
                 try {
                     int key = Integer.parseInt(option);
-                    displayData(list,key);
-                }
-                catch (NumberFormatException e) {
+                    displayData(queue, key);
+                } catch (NumberFormatException e) {
                     System.out.println("+------------------------------------------+");
                     System.out.println("|               Invalid key!               |");
                     System.out.println("+------------------------------------------+");
@@ -581,7 +577,7 @@ public class ClinicQueueApps
                         Doctor currentDoc = (Doctor) docQueue.getFirst();
                         while (currentDoc != null) {
                             System.out.println(" "+(countDoc+1)+"] "+currentDoc.toStringFormatted());
-                            currentDoc = (Doctor) docQ.getNext();
+                            currentDoc = (Doctor) docQueue.getNext();
                             countDoc++;
                             System.out.println("+------------------------------------------+");
                         }
@@ -589,9 +585,9 @@ public class ClinicQueueApps
                         int optionDoc = inNum.nextInt();
                         if (optionDoc <= countDoc && optionDoc >= 0) {
                             int counter2 = 1;
-                            currentDoc = (Doctor) docLL.getFirst();
+                            currentDoc = (Doctor) docQueue.getFirst();
                             while (counter2 < optionDoc) {
-                                currentDoc = (Doctor) docLL.getNext();
+                                currentDoc = (Doctor) docQueue.getNext();
                                 counter2++;
                             }
                             appObj.setDocID(currentDoc.getDocID());
@@ -713,30 +709,30 @@ public class ClinicQueueApps
     // Getting specific data by ID
     public static Object getObjectByID(String id) {
         if (id.substring(0,1).equals("A")) {
-            Appointment appObj = (Appointment) appLL.getFirst();
+            Appointment appObj = (Appointment) appQueue.getFirst();
             while (appObj != null) {
                 if (appObj.getAppID().equals(id)) {
                     return appObj;
                 }
-                appObj = (Appointment) appLL.getNext();
+                appObj = (Appointment) appQueue.getNext();
             }
         }
         else if (id.substring(0,1).equals("P")) {
-            Patient patObj = (Patient) patLL.getFirst();
+            Patient patObj = (Patient) patQueue.getFirst();
             while (patObj != null) {
                 if (patObj.getPatID().equals(id)) {
                     return patObj;
                 }
-                patObj = (Patient) patLL.getNext();
+                patObj = (Patient) patQueue.getNext();
             }
         }
         else if (id.substring(0,1).equals("D")) {
-            Doctor docObj = (Doctor) docLL.getFirst();
+            Doctor docObj = (Doctor) docQueue.getFirst();
             while (docObj != null) {
                 if (docObj.getDocID().equals(id)) {
                     return docObj;
                 }
-                docObj = (Doctor) docLL.getNext();
+                docObj = (Doctor) docQueue.getNext();
             }
         }
         return null;
