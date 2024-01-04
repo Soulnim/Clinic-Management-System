@@ -123,27 +123,31 @@ public class ClinicQApps
         System.out.println("+------------------------------------------+");
         System.out.println("|                MAIN MENU                 |");
         System.out.println("+------------------------------------------+");
-        System.out.println("|     A] Manage Appointment                |");
-        System.out.println("|     B] Manage Patient                    |");
-        System.out.println("|     C] Manage Invoice                    |");
-        System.out.println("|     D] View Doctor's Info                |");
-        System.out.println("|     E] Exit                              |");
+        System.out.println("|     A] Schedule New Appointment          |");
+        System.out.println("|     B] Manage Appointment                |");
+        System.out.println("|     C] Manage Patient                    |");
+        System.out.println("|     D] Manage Invoice                    |");
+        System.out.println("|     E] View Doctor's Info                |");
+        System.out.println("|     F] Exit                              |");
         System.out.println("+------------------------------------------+");
         System.out.print(" Option : ");
         char option = inChar.next().charAt(0);
         if (option == 'A' || option == 'a') {
-            displayList(appQueue,patQueue);
+            addData(appQueue,patQueue);
         }
         else if (option == 'B' || option == 'b') {
-            displayList(patQueue,null);
+            displayList(appQueue,patQueue);
         }
         else if (option == 'C' || option == 'c') {
-            displayList(docQueue,null);
+            displayList(patQueue,null);
         }
         else if (option == 'D' || option == 'd') {
-            // to be determined
+            displayList(docQueue,null);
         }
         else if (option == 'E' || option == 'e') {
+            // to be determined
+        }
+        else if (option == 'F' || option == 'f') {
             sessionCode = 1;
         }
         else {
@@ -253,13 +257,6 @@ public class ClinicQApps
                 System.out.println(" [C] Previous , [V] Next , [H] Home");
             }
             System.out.println("+------------------------------------------+ Page : " + page);
-
-            // Determine whether it is addable or not
-            if (object instanceof Appointment) {
-                System.out.println("|             [A] Add new data             |");
-                System.out.println("+------------------------------------------+");
-            }
-
             System.out.print(" Option : ");
             String option = inText.nextLine();
             if (option.equalsIgnoreCase("V")) {
@@ -278,11 +275,8 @@ public class ClinicQApps
                 }
             } else if (option.equalsIgnoreCase("H")) {
                 break;
-            } else if (option.equalsIgnoreCase("A")) {
-                if (object instanceof Appointment) {
-                    addData(queue, queue2);
-                }
-            } else if (option.equalsIgnoreCase("K")) {
+            }
+            else if (option.equalsIgnoreCase("K")) {
                 if (object instanceof Appointment) {
                     showCompleted = !showCompleted;
                 }
