@@ -126,7 +126,7 @@ public class ClinicQApps
         System.out.println("|     A] Schedule New Appointment          |");
         System.out.println("|     B] Manage Appointment                |");
         System.out.println("|     C] Manage Patient                    |");
-        System.out.println("|     D] Manage Invoice                    |");
+        System.out.println("|     D] Manage Doctor                     |");
         System.out.println("|     E] View Doctor's Info                |");
         System.out.println("|     F] Exit                              |");
         System.out.println("+------------------------------------------+");
@@ -296,12 +296,20 @@ public class ClinicQApps
     }
     
     // DISPLAY SPECIFIC DATA FROM LIST
-    public static void displayData(LinkedList list, int key) {
+    public static void displayData(Queue list, int key) {
         int counter = 1;
-        Object object = (Object) list.getFirst();
-        while (counter != key) {
-            object = (Object) list.getNext();
+        Queue temp = new Queue();
+        Object object = (Object) list.getFront();
+        while (!list.isEmpty()) {
+            Object current = (Object) list.dequeue();
+            if (counter == key) {
+                object = current;
+            }
+            temp.enqueue(current);
             counter++;
+        }
+        while (!temp.isEmpty()) {
+            list.enqueue(temp.dequeue());
         }
         while (true) {
             if (object instanceof Appointment) {
