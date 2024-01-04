@@ -511,13 +511,17 @@ public class ClinicQApps
     }
     
     // Check wether patient is exist or not
-    public static boolean patientIsExist(LinkedList list,String NRIC) {
-        Patient patObj = (Patient) list.getFirst();
-        while (patObj != null) {
+    public static boolean patientIsExist(Queue list,String NRIC) {
+        Queue temp = new Queue();
+        while (!list.isEmpty()) {
+            Patient patObj = (Patient) patQueue.dequeue();
             if (patObj.getNRIC().equals(NRIC)) {
                 return true;
             }
-            patObj = (Patient) list.getNext();
+            temp.enqueue(patObj);
+        }
+        while(!temp.isEmpty()) {
+            list.enqueue(temp.dequeue());
         }
         return false;
     }
