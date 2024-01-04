@@ -126,7 +126,7 @@ public class ClinicQApps
         System.out.println("|     A] Schedule New Appointment          |");
         System.out.println("|     B] Manage Appointment                |");
         System.out.println("|     C] Manage Patient                    |");
-        System.out.println("|     D] Manage Doctor                     |");
+        System.out.println("|     D] Manage Invoice                    |");
         System.out.println("|     E] View Doctor's Info                |");
         System.out.println("|     F] Exit                              |");
         System.out.println("+------------------------------------------+");
@@ -142,10 +142,10 @@ public class ClinicQApps
             displayList(patQueue,null);
         }
         else if (option == 'D' || option == 'd') {
-            displayList(docQueue,null);
+            // to be determined
         }
         else if (option == 'E' || option == 'e') {
-            // to be determined
+            displayList(docQueue,null);
         }
         else if (option == 'F' || option == 'f') {
             sessionCode = 1;
@@ -296,20 +296,12 @@ public class ClinicQApps
     }
     
     // DISPLAY SPECIFIC DATA FROM LIST
-    public static void displayData(Queue list, int key) {
+    public static void displayData(LinkedList list, int key) {
         int counter = 1;
-        Queue temp = new Queue();
-        Object object = (Object) list.getFront();
-        while (!list.isEmpty()) {
-            Object current = (Object) list.dequeue();
-            if (counter == key) {
-                object = current;
-            }
-            temp.enqueue(current);
+        Object object = (Object) list.getFirst();
+        while (counter != key) {
+            object = (Object) list.getNext();
             counter++;
-        }
-        while (!temp.isEmpty()) {
-            list.enqueue(temp.dequeue());
         }
         while (true) {
             if (object instanceof Appointment) {
@@ -388,7 +380,7 @@ public class ClinicQApps
     }
     
     // ADD DATA TO LIST
-    public static void addData(LinkedList list, LinkedList list2) {
+    public static void addData(Queue list, Queue list2) {
         if (list.getFirst() instanceof Appointment) {
             System.out.print("\f");
             System.out.println("+------------------------------------------+");
@@ -474,35 +466,42 @@ public class ClinicQApps
     }
     
     // GENERATE RANDOM NUMBER FOR ID
-    public static int generateID(LinkedList list) {
+    public static int generateID(Queue list) {
+         Queue temp = new Queue();
         while (true) {
-            if (list.getFirst() instanceof Appointment) {
+            if (list.getFront() instanceof Appointment) {
                 boolean isExist = false;
                 Random rand = new Random();
                 int randInt = rand.nextInt(100);
-                Appointment appObj = (Appointment) list.getFirst();
-                while (appObj != null) {
+                while (!list.isEmpty()) {
+                    Appointment appObj = (Appointment) appQueue.dequeue();
                     int getID = Integer.parseInt(appObj.getAppID().substring(1));
                     if (getID == randInt) {
                         isExist = true;
                     }
-                    appObj = (Appointment) list.getNext();
+                    temp.enqueue(appObj);
+                }
+                while(!temp.isEmpty()) {
+                    list.enqueue(temp.dequeue());
                 }
                 if (isExist == false) {
                     return randInt;
                 }
             }
-            else if (list.getFirst() instanceof Patient) {
+            else if (list.getFront() instanceof Patient) {
                 boolean isExist = false;
                 Random rand = new Random();
                 int randInt = rand.nextInt(100);
-                Patient patObj = (Patient) list.getFirst();
-                while (patObj != null) {
+                while (!list.isEmpty()) {
+                    Patient patObj = (Patient) patQueue.dequeue();
                     int getID = Integer.parseInt(patObj.getPatID().substring(1));
                     if (getID == randInt) {
                         isExist = true;
                     }
-                    patObj = (Patient) list.getNext();
+                    temp.enqueue(patObj);
+                }
+                while(!temp.isEmpty()) {
+                    list.enqueue(temp.dequeue());
                 }
                 if (isExist == false) {
                     return randInt;
