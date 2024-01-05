@@ -62,7 +62,7 @@ public class ClinicQApps
         
         // STORE Data back to clinicdata.txt
         try {
-            FileWriter fw = new FileWriter("clinic.txt");
+            FileWriter fw = new FileWriter("clinicdata.txt");
             while (!appQueue.isEmpty()) {
                 Appointment appObj = (Appointment) appQueue.dequeue();
                 fw.write(appObj.txtFormat()+"\n");
