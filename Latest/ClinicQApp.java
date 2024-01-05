@@ -687,12 +687,20 @@ public class ClinicQApps
     }
     
     // DELETE DATA FROM LIST
-    public static boolean deleteData(LinkedList list, int key) {
-        int counter = 1;
-        Object object = (Object) list.getFirst();
-        while (counter != key) {
-            object = (Object) list.getNext();
+    public static boolean deleteData(Queue list, int key) {
+        int counter = 0;
+        Queue temp = new Queue();
+        Object object = new Object();
+        while (!list.isEmpty()) {
+            Object current = (Object) list.dequeue();
+            if (counter == key-1) {
+                object = current;
+            }
+            temp.enqueue(current);
             counter++;
+        }
+        while (!temp.isEmpty()) {
+            list.enqueue(temp.dequeue());
         }
         System.out.print("\f");
         System.out.println("+------------------------------------------+");
@@ -714,21 +722,17 @@ public class ClinicQApps
         System.out.print(" Option : ");
         char option = inChar.next().charAt(0);
         if (option == 'Y' || option == 'y') {
-            counter = 1;
-            LinkedList temp = new LinkedList();
-            Object currentObj = (Object) list.getFirst();
-            while (currentObj != null) {
-                if (counter != key) {
-                    temp.addLast(currentObj);
+            counter = 0;
+            Queue tempQ = new Queue();
+            while (!list.isEmpty()) {
+                Object currObj = (Object) list.dequeue();
+                if (counter != key-1) {
+                    tempQ.enqueue(currObj);
                 }
                 counter++;
-                currentObj = (Object) list.getNext();
             }
-            list.clear();
-            currentObj = (Object) temp.getFirst();
-            while (currentObj != null) {
-                list.addLast(currentObj);
-                currentObj = (Object) temp.getNext();
+            while (!tempQ.isEmpty()) {
+                list.enqueue(tempQ.dequeue());
             }
             System.out.println("+------------------------------------------+");
             System.out.println("|           Data has been deleted!         |");
