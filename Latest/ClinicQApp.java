@@ -283,7 +283,16 @@ public class ClinicQApps
             } else {
                 try {
                     int key = Integer.parseInt(option);
-                    displayData(queue, key);
+                    if (key > 0 && key <= counter) {
+                        displayData(queue, key);
+                    }
+                    else {
+                        System.out.println("+------------------------------------------+");
+                        System.out.println("|               Invalid key!               |");
+                        System.out.println("+------------------------------------------+");
+                        System.out.print(" Press [Enter] to continue");
+                        String enter = inText.nextLine();
+                    }
                 } catch (NumberFormatException e) {
                     System.out.println("+------------------------------------------+");
                     System.out.println("|               Invalid key!               |");
@@ -296,12 +305,20 @@ public class ClinicQApps
     }
     
     // DISPLAY SPECIFIC DATA FROM LIST
-    public static void displayData(LinkedList list, int key) {
+    public static void displayData(Queue list, int key) {
         int counter = 1;
-        Object object = (Object) list.getFirst();
-        while (counter != key) {
-            object = (Object) list.getNext();
+        Queue temp = new Queue();
+        Object object = list.getFront();
+        while (!list.isEmpty()) {
+            Object current = (Object) list.dequeue();
+            if (counter == key) {
+                object = current;
+            }
+            temp.enqueue(current);
             counter++;
+        }
+        while (!temp.isEmpty()) {
+            list.enqueue(temp.dequeue());
         }
         while (true) {
             if (object instanceof Appointment) {
@@ -381,12 +398,12 @@ public class ClinicQApps
     
     // ADD DATA TO LIST
     public static void addData(Queue list, Queue list2) {
-        if (list.getFirst() instanceof Appointment) {
+        if (list.getFront() instanceof Appointment) {
             System.out.print("\f");
             System.out.println("+------------------------------------------+");
             System.out.println("|            ADD NEW APPOINTMENT           |");
             System.out.println("+------------------------------------------+");
-            Patient pat = new Patient();; // placeholder var
+            Patient pat = new Patient(); // placeholder var
             Doctor doc = new Doctor(); // placeholder var
             System.out.print(" NRIC : ");
             String NRIC = inText.nextLine();
@@ -434,13 +451,15 @@ public class ClinicQApps
                 }
                 System.out.print(" Option : ");
                 int option = inNum.nextInt();
-                if (option <= counter && option >= 0) {
+                if (option <= counter && option >= 1) {
                     int counter2 = 0;                    
-                    while (counter2 < option) {
+                    while (!docQueue.isEmpty()) {
                         Doctor docObj = (Doctor) docQueue.dequeue();
+                        if (counter2 == option-1) {
+                            doc = docObj;
+                        }
                         counter2++;
                         temp.enqueue(docObj);
-                        doc = docObj;
                     }
                     while(!temp.isEmpty()) {
                         docQueue.enqueue(temp.dequeue());
@@ -524,17 +543,18 @@ public class ClinicQApps
     // Check wether patient is exist or not
     public static boolean patientIsExist(Queue list,String NRIC) {
         Queue temp = new Queue();
+        boolean isExist = false;
         while (!list.isEmpty()) {
             Patient patObj = (Patient) list.dequeue();
             if (patObj.getNRIC().equals(NRIC)) {
-                return true;
+                isExist = true;
             }
             temp.enqueue(patObj);
         }
         while(!temp.isEmpty()) {
             list.enqueue(temp.dequeue());
         }
-        return false;
+        return isExist;
     }
     
     // EDIT DATA IN LIST
@@ -724,34 +744,45 @@ public class ClinicQApps
     
     // Getting specific data by ID
     public static Object getObjectByID(String id) {
+        Queue temp = new Queue();
+        Object object = new Object();
         if (id.substring(0,1).equals("A")) {
-            Appointment appObj = (Appointment) appQueue.getFirst();
-            while (appObj != null) {
+            while (!appQueue.isEmpty()) {
+                Appointment appObj = (Appointment) appQueue.dequeue();
                 if (appObj.getAppID().equals(id)) {
-                    return appObj;
+                    object = appObj;
                 }
-                appObj = (Appointment) appQueue.getNext();
+                temp.enqueue(appObj);
+            }
+            while (!temp.isEmpty()) {
+                appQueue.enqueue(temp.dequeue());
             }
         }
         else if (id.substring(0,1).equals("P")) {
-            Patient patObj = (Patient) patQueue.getFirst();
-            while (patObj != null) {
+            while (!patQueue.isEmpty()) {
+                Patient patObj = (Patient) patQueue.dequeue();
                 if (patObj.getPatID().equals(id)) {
-                    return patObj;
+                    object = patObj;
                 }
-                patObj = (Patient) patQueue.getNext();
+                temp.enqueue(patObj);
+            }
+            while (!temp.isEmpty()) {
+                patQueue.enqueue(temp.dequeue());
             }
         }
         else if (id.substring(0,1).equals("D")) {
-            Doctor docObj = (Doctor) docQueue.getFirst();
-            while (docObj != null) {
+            while (!docQueue.isEmpty()) {
+                Doctor docObj = (Doctor) docQueue.dequeue();
                 if (docObj.getDocID().equals(id)) {
-                    return docObj;
+                    object = docObj;
                 }
-                docObj = (Doctor) docQueue.getNext();
+                temp.enqueue(docObj);
+            }
+            while (!temp.isEmpty()) {
+                docQueue.enqueue(temp.dequeue());
             }
         }
-        return null;
+        return object;
     }
     
     // PAUSE, FOR DEBUGGING - WILL BE DELETED SOON
