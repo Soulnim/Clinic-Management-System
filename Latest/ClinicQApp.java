@@ -610,23 +610,32 @@ public class ClinicQApps
                         System.out.println("+------------------------------------------+");
                         System.out.println("|      Choose a doctor to be assigned :    |");
                         System.out.println("+------------------------------------------+");
-                        Doctor currentDoc = (Doctor) docQueue.getFirst();
-                        while (currentDoc != null) {
-                            System.out.println(" "+(countDoc+1)+"] "+currentDoc.toStringFormatted());
-                            currentDoc = (Doctor) docQueue.getNext();
+                        Queue temp = new Queue();
+                        while (!docQueue.isEmpty()) {
+                            Doctor currentDoc = (Doctor) docQueue.dequeue();
+                            System.out.println(" "+(countDoc+1)+"]"+currentDoc.toStringFormatted());
                             countDoc++;
                             System.out.println("+------------------------------------------+");
+                            temp.enqueue(currentDoc);
+                        }
+                        while(!temp.isEmpty()) {
+                            docQueue.enqueue(temp.dequeue());
                         }
                         System.out.print(" Option : ");
                         int optionDoc = inNum.nextInt();
-                        if (optionDoc <= countDoc && optionDoc >= 0) {
-                            int counter2 = 1;
-                            currentDoc = (Doctor) docQueue.getFirst();
-                            while (counter2 < optionDoc) {
-                                currentDoc = (Doctor) docQueue.getNext();
+                        if (optionDoc <= countDoc && optionDoc >= 1) {
+                            int counter2 = 0;                    
+                            while (!docQueue.isEmpty()) {
+                                Doctor currentDoc = (Doctor) docQueue.dequeue();
+                                if (counter2 == optionDoc-1) {
+                                    appObj.setDocID(currentDoc.getDocID());
+                                }
                                 counter2++;
+                                temp.enqueue(currentDoc);
                             }
-                            appObj.setDocID(currentDoc.getDocID());
+                            while(!temp.isEmpty()) {
+                                docQueue.enqueue(temp.dequeue());
+                            }
                             break;
                         }
                         else {
