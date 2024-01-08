@@ -159,14 +159,14 @@ public class ClinicQApps
         }
     }
     
-    public static void displayList(Queue queue, Queue queue2) {
+    public static void displayList(Queue list1, Queue list2) {
         int page = 1;
         int floor = 0;
         boolean showCompleted = true;
         
         while (true) {
             // Check for queue type
-            Object object = (Object) queue.getFront();
+            Object object = (Object) list1.getFront();
             if (object != null) {
                 if (object instanceof Appointment) {
                     System.out.print("\f");
@@ -196,17 +196,17 @@ public class ClinicQApps
 
             int counter = 0;
             // Check if the queue is appQueue
-            object = (Object) queue.getFront();
+            object = (Object) list1.getFront();
             if (object instanceof Appointment) {
                 Queue tempApp = new Queue();
                 Queue tempPat = new Queue();
-                while (!queue.isEmpty() && counter != floor) {
-                    Object current = (Object) queue.dequeue();
+                while (!list1.isEmpty() && counter != floor) {
+                    Object current = (Object) list1.dequeue();
                     tempApp.enqueue(current);
                     counter++;
                 }
-                while (!queue.isEmpty() && counter < (page * 10)) {
-                    Appointment appObj = (Appointment) queue.dequeue();
+                while (!list1.isEmpty() && counter < (page * 10)) {
+                    Appointment appObj = (Appointment) list1.dequeue();
                     tempApp.enqueue(appObj);
                     if (showCompleted || appObj.getStatus().equals("Pending")) {
                         System.out.println(" " + (counter + 1) + "] " + appObj.toString());
@@ -216,20 +216,20 @@ public class ClinicQApps
                 }
                 // store temp's data back to its original list
                 while (!tempApp.isEmpty()) {
-                    queue.enqueue(tempApp.dequeue());
+                    list1.enqueue(tempApp.dequeue());
                 }
                 while (!tempPat.isEmpty()) {
-                    queue2.enqueue(tempPat.dequeue());
+                    list2.enqueue(tempPat.dequeue());
                 }
             } else {
                 Queue temp = new Queue();
-                while (!queue.isEmpty() && counter != floor) {
-                    Object current = queue.dequeue();
+                while (!list1.isEmpty() && counter != floor) {
+                    Object current = list1.dequeue();
                     temp.enqueue(current);
                     counter++;
                 }
-                while (!queue.isEmpty() && counter < (page * 10)) {
-                    object = queue.dequeue();
+                while (!list1.isEmpty() && counter < (page * 10)) {
+                    object = list1.dequeue();
                     temp.enqueue(object);
                     System.out.println(" " + (counter + 1) + "] " + object.toString());
                     counter++;
@@ -237,7 +237,7 @@ public class ClinicQApps
                 }
                 // store temp's data back to its original list
                 while (!temp.isEmpty()) {
-                    queue.enqueue(temp.dequeue());
+                    list1.enqueue(temp.dequeue());
                 }
             }
 
@@ -256,7 +256,9 @@ public class ClinicQApps
             } else {
                 System.out.println(" [C] Previous , [V] Next , [H] Home");
             }
-            System.out.println("+------------------------------------------+ Page : " + page);
+            System.out.println("+------------------------------------------+ Page : "+page);
+            System.out.println("|             [S] Search Data              |");
+            System.out.println("+------------------------------------------+");
             System.out.print(" Option : ");
             String option = inText.nextLine();
             if (option.equalsIgnoreCase("V")) {
@@ -280,11 +282,15 @@ public class ClinicQApps
                 if (object instanceof Appointment) {
                     showCompleted = !showCompleted;
                 }
-            } else {
+            }
+            else if (option.equalsIgnoreCase("S")) {
+                searchData(list1,list2);
+            }
+            else {
                 try {
                     int key = Integer.parseInt(option);
                     if (key > 0 && key <= counter) {
-                        displayData(queue, key);
+                        displayData(list1, key);
                     }
                     else {
                         System.out.println("+------------------------------------------+");
@@ -796,6 +802,127 @@ public class ClinicQApps
             }
         }
         return object;
+    }
+    
+    // SEARCH FOR DATA IN LIST - NOT MODIFIED YET
+    public static void searchData(Queue list,Queue list2) {
+        while (true) {
+            System.out.print("\f");
+            System.out.println("+------------------------------------------+");
+            System.out.println("|               SEARCH DATA                |");
+            System.out.println("+------------------------------------------+");
+            System.out.print(" Enter keyword ('0' to back) : ");
+            String keyword = inText.nextLine();
+            System.out.println("+------------------------------------------+");
+            if (keyword.equals("0")) {
+                break;
+            }
+            while (true) {
+                System.out.print("\f");
+                System.out.println("+------------------------------------------+");
+                System.out.println("|               SEARCH DATA                |");
+                System.out.println("+------------------------------------------+");
+                int counter = 1;
+                int countFound = 0;
+                Queue keyFound = new Queue();
+                Queue temp = new Queue();
+                if (list.getFront() instanceof Appointment) {
+                    while (!list.isEmpty()) {
+                        Appointment appObj = (Appointment) list.dequeue();
+                        if (appObj.getDate().equalsIgnoreCase(keyword) || appObj.getTime().equalsIgnoreCase(keyword) ||
+                            appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getStatus().equalsIgnoreCase(keyword)) {
+                            System.out.println(" "+(countFound+1)+"] "+appObj.toString()); 
+                            System.out.println("+------------------------------------------+");
+                            keyFound.enqueue(counter);
+                            countFound++;
+                        }
+                        counter++;
+                        temp.enqueue(appObj);
+                    }
+                    while (!temp.isEmpty()) {
+                        list.enqueue(temp.dequeue());
+                    }
+                }
+                else if (list.getFirst() instanceof Patient) {
+                    while (!list.isEmpty()) {
+                        Patient patObj = (Patient) list.dequeue();
+                        if (patObj.getPatID().equalsIgnoreCase(keyword) || patObj.getNRIC().equalsIgnoreCase(keyword) ||
+                            patObj.getPatName().equalsIgnoreCase(keyword)) {
+                            System.out.println(" "+(countFound+1)+"] "+patObj.toString()); 
+                            System.out.println("+------------------------------------------+");
+                            keyFound.enqueue(counter);
+                            countFound++;
+                        }
+                        counter++;
+                        temp.enqueue(patObj);
+                    }
+                    while (!temp.isEmpty()) {
+                        list.enqueue(temp.dequeue());
+                    }
+                }
+                else if (list.getFirst() instanceof Doctor) {
+                    while (!list.isEmpty()) {
+                        Doctor docObj = (Doctor) list.dequeue();
+                        if (docObj.getDocID().equalsIgnoreCase(keyword) || docObj.getDocName().equalsIgnoreCase(keyword) ||
+                            docObj.getSpecialty().equalsIgnoreCase(keyword)) {
+                            System.out.println(" "+(countFound+1)+"] "+docObj.toString()); 
+                            System.out.println("+------------------------------------------+");
+                            keyFound.enqueue(counter);
+                            countFound++;
+                        }
+                        counter++;
+                        temp.enqueue(docObj);
+                    }
+                    while (!temp.isEmpty()) {
+                        list.enqueue(temp.dequeue());
+                    }
+                }
+                
+                if (countFound == 0) {
+                    System.out.println(" No data matches with the keyword : "+keyword); 
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                    break;
+                }
+                else {
+                    if (countFound == 1) {
+                        System.out.println(" A data matches with the keyword : "+keyword);
+                    }
+                    else {
+                        System.out.println(" "+countFound+" data matches with the keyword : "+keyword);
+                    }
+                    System.out.print(" Enter number to select ('0' to back) : ");
+                    int num = inNum.nextInt();
+                    if (num == 0) {
+                        break;
+                    }
+                    else if (num > 0 && num <= countFound+1) {
+                        int counter2 = 1;
+                        Object numKey = (Object) list.getFront(); // holding next data
+                        while (!keyFound.isEmpty()) {
+                            int currentNum = (int) keyFound.dequeue();
+                            if (counter2 == num) {
+                                numKey = (int) currentNum;
+                            }
+                            counter2++;
+                            temp.enqueue(currentNum);
+                        }
+                        while (!temp.isEmpty()) {
+                            keyFound.enqueue(temp.dequeue());
+                        }
+                        displayData(list,(int) numKey);
+                    }
+                    else {
+                        System.out.println("+------------------------------------------+");
+                        System.out.println("|               Invalid key!               |");
+                        System.out.println("+------------------------------------------+");
+                        System.out.print(" Press [Enter] to continue");
+                        String enter = inText.nextLine();
+                    }
+                }
+            }
+        }
     }
     
     // PAUSE, FOR DEBUGGING - WILL BE DELETED SOON
