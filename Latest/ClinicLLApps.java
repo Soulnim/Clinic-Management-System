@@ -130,7 +130,7 @@ public class ClinicLLApps
         System.out.println("|     B] Manage Appointment                |");
         System.out.println("|     C] Manage Patient                    |");
         System.out.println("|     D] Manage Invoice                    |");
-        System.out.println("|     E] View Doctor's Info                |");
+        System.out.println("|     E] Manage Doctor                     |");
         System.out.println("|     F] Exit                              |");
         System.out.println("+------------------------------------------+");
         System.out.print(" Option : ");
@@ -367,7 +367,7 @@ public class ClinicLLApps
                 System.out.println("+------------------------------------------+");
                 System.out.println(" "+patObj.toStringFormatted());
                 System.out.println("+------------------------------------------+");
-                System.out.println("|           [A] Edit, [C] Back             |");
+                System.out.println("|            [A] Edit, [C] Back            |");
                 System.out.println("+------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
@@ -389,14 +389,27 @@ public class ClinicLLApps
                 Doctor docObj = (Doctor) object;
                 System.out.print("\f");
                 System.out.println("+------------------------------------------+");
-                System.out.println("|                DOCTOR DATA               |");
+                System.out.println("|               DOCTOR DATA                |");
                 System.out.println("+------------------------------------------+");
                 System.out.println(" "+docObj.toStringFormatted());
                 System.out.println("+------------------------------------------+");
-                System.out.println("|         Press [Enter] to continue        |");
+                System.out.println("|            [A] Edit, [C] Back            |");
                 System.out.println("+------------------------------------------+");
-                String enter = inText.nextLine();
-                break;
+                System.out.print(" Option : ");
+                char option = inChar.next().charAt(0);
+                if (option == 'A' || option == 'a') {
+                    editData(list,key);
+                }
+                else if (option == 'C' || option == 'c') {
+                    break;
+                }
+                else {
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|               Invalid key!               |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
             }
         }
     }
@@ -484,6 +497,9 @@ public class ClinicLLApps
             System.out.println("+------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
+        }
+        else if (list.getFirst() instanceof Doctor) {
+            // 
         }
     }
     
@@ -661,7 +677,42 @@ public class ClinicLLApps
                 }
             }
             else if (object instanceof Doctor) {
-                // to be determined
+                Doctor docObj = (Doctor) object;
+                System.out.print("\f");
+                System.out.println("+------------------------------------------+");
+                System.out.println("|            EDIT DOCTOR'S DATA            |");
+                System.out.println("+------------------------------------------+");
+                System.out.println(" A] Name : "+docObj.getDocName());
+                System.out.println(" B] Specialty : "+docObj.getSpecialty());
+                System.out.println(" C] Back");
+                System.out.println("+------------------------------------------+");
+                System.out.println(" Option : ");
+                char option = inChar.next().charAt(0);
+                if (option == 'A' || option =='a') {
+                    System.out.println(" Current name : "+docObj.getDocName());
+                    System.out.print(" New name : ");
+                    String newName = inText.nextLine();
+                    docObj.setDocName(newName);
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|           Data has been edited!          |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 'B' || option == 'b') {
+                    System.out.println(" Current specialty : "+docObj.getSpecialty());
+                    System.out.print(" New specialty : ");
+                    String newSpec = inText.nextLine();
+                    docObj.setSpecialty(newSpec);
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|           Data has been edited!          |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
+                else {
+                    break;
+                }
             }
         }
     }
