@@ -29,9 +29,9 @@ public class ClinicLLApps
                     String patID = st.nextToken();
                     String docID = st.nextToken();
                     String date = st.nextToken();
-                    String time = st.nextToken();
+                    int slot = Integer.parseInt(st.nextToken());
                     String status = st.nextToken();
-                    appLL.addLast(new Appointment(appID,patID,docID,date,time,status));
+                    appLL.addLast(new Appointment(appID,patID,docID,date,slot,status));
                 }
                 else if (dataType.equals("PATIENT")) {
                     String patID = st.nextToken();
@@ -165,6 +165,8 @@ public class ClinicLLApps
     public static void displayList(LinkedList list, LinkedList list2) {
         int page = 1;
         int floor = 0;
+        
+        // Filters - to be determined
         boolean showCompleted = true;
         while (true) {
             // Check for list type
@@ -421,6 +423,7 @@ public class ClinicLLApps
             System.out.println("+------------------------------------------+");
             System.out.println("|            ADD NEW APPOINTMENT           |");
             System.out.println("+------------------------------------------+");
+            Appointment app = new Appointment();
             Patient pat = new Patient();; // placeholder var
             Doctor doc = new Doctor(); // placeholder var
             System.out.print(" NRIC : ");
@@ -438,13 +441,99 @@ public class ClinicLLApps
                     }
                     patObj = (Patient) list2.getNext();
                 }
-                System.out.println(" [Identical NRIC found!]");
                 System.out.println(" Patient Name : "+pat.getPatName());
+                System.out.println("+------------------------------------------+");
+                System.out.println("|             Patient exist!               |");
+                System.out.println("+------------------------------------------+");
+                System.out.print(" Press [Enter] to continue");
+                String enter = inText.nextLine();
             }
-            System.out.print(" Date (DD/MM/YYYY) : ");
-            String date = inText.nextLine();
-            System.out.print(" Time (24-hours format) : ");
-            String time = inText.nextLine();
+            // Determine if any slot for the day is available, else get another date
+            String date = ""; // Data holding
+            int slot = 0; // Data holding
+            while (true) {
+                System.out.print("\f");
+                System.out.println("+------------------------------------------+");
+                System.out.println("|            Set Date and Time             |");
+                System.out.println("+------------------------------------------+");
+                boolean dateIsChoosen = false;
+                System.out.print(" Date (DD/MM/YYYY) : ");
+                date = inText.nextLine();
+                System.out.println("+------------------------------------------+");
+                while (true) {
+                    System.out.print("\f");
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|            Set Date and Time             |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.println(" Date (DD/MM/YYYY) : "+date);
+                    System.out.println("+------------------------------------------+");
+                    int time = 1000;
+                    // A total of 6 slots, 1 hour each, from 10 am to 3 pm
+                    LinkedList slotList = new LinkedList();
+                    for (int i=0; i<6; i++) {
+                        boolean isExist = false;
+                        Appointment appObj = (Appointment) list.getFirst();
+                        while (appObj != null) {
+                            if (appObj.getDate().equals(date) && appObj.getSlot() == (i+1)) {
+                                isExist = true;
+                            }
+                            appObj = (Appointment) list.getNext();
+                        }
+                        if (isExist == true) {
+                            System.out.println(" Slot "+(i+1)+" is reserved [/]");
+                            System.out.println("+------------------------------------------+");
+                            slotList.addLast(1);
+                        }
+                        else {
+                            System.out.println(" ["+time+"] Slot "+(i+1)+" is empty!");
+                            System.out.println("+------------------------------------------+");
+                            slotList.addLast(0);
+                        }
+                        time+=100;
+                    }
+                    System.out.print(" Choose available slot ('0' to back) : ");
+                    int slotOpt = inNum.nextInt();
+                    boolean isEmpty = true;
+                    if (slotOpt == 0) {
+                        break;
+                    }
+                    else if (slotOpt >= 1 && slotOpt <= 6) {
+                        int currentSlot = (int) slotList.getFirst();
+                        for (int i=1; i<=6; i++) {
+                            if (i == slotOpt) {
+                                if (currentSlot == 1) {
+                                    isEmpty = false;
+                                }
+                            }
+                            if (i != 6) {
+                                currentSlot = (int) slotList.getNext();
+                            }
+                        }
+                        if (isEmpty == true) {
+                            slot = slotOpt;
+                            dateIsChoosen = true;
+                            break;
+                        }
+                        else {
+                            System.out.println("+------------------------------------------+");
+                            System.out.println("|            Slot is reserved!             |");
+                            System.out.println("+------------------------------------------+");
+                            System.out.print(" Press [Enter] to continue");
+                            String enter = inText.nextLine();
+                        }
+                    } else {
+                        System.out.println("+------------------------------------------+");
+                        System.out.println("|               Invalid key!               |");
+                        System.out.println("+------------------------------------------+");
+                        System.out.print(" Press [Enter] to continue");
+                        String enter = inText.nextLine();
+                    }
+                }
+                if (dateIsChoosen == true) {
+                    break;
+                }
+            }
+            // Choose doctor
             while (true) {
                 // Choose doctor
                 int counter = 0;
@@ -479,18 +568,19 @@ public class ClinicLLApps
                     String enter = inText.nextLine();
                 }
             }
+            // add to list
+            app = new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,slot,"Pending");
+            list.addLast(app);
             System.out.print("\f");
             System.out.println("+------------------------------------------+");
-            System.out.println("|            ADD NEW APPOINTMENT           |");
+            System.out.println("|              NEW APPOINTMENT             |");
             System.out.println("+------------------------------------------+");
-            System.out.println(" Date : "+date);
-            System.out.println(" Time : "+time);
+            System.out.println(" Date : "+app.getDate()); // to be determined
+            System.out.println(" Slot : "+app.getSlot()+" | Time : "+app.getTime()); // to be determined
             System.out.println("+------------------------------------------+");
             System.out.println(pat.toStringFormatted());
             System.out.println("+------------------------------------------+");
             System.out.println(doc.toStringFormatted());
-            // add to list
-            list.addLast(new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,time,"Pending"));
             
             System.out.println("+------------------------------------------+");
             System.out.println("|           Data has been added!           |");
@@ -569,36 +659,103 @@ public class ClinicLLApps
                 System.out.println("+------------------------------------------+");
                 System.out.println("|           EDIT APPOINTMENT DATA          |");
                 System.out.println("+------------------------------------------+");
-                System.out.println(" A] Date : "+appObj.getDate());
-                System.out.println(" B] Time : "+appObj.getTime());
-                System.out.println(" C] Assigned Doctor : "+docObj.getDocName());
+                System.out.println(" A] Slot : "+appObj.getSlot());
+                System.out.println("    Date : "+appObj.getDate());
+                System.out.println("    Time : "+appObj.getTime());
+                System.out.println(" B] Assigned Doctor : "+docObj.getDocName());
                 System.out.println(" E] Back");
                 System.out.println("+------------------------------------------+");
                 System.out.println(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option =='a') {
-                    System.out.println(" Current date : "+appObj.getDate());
-                    System.out.print(" New date (DD/MM/YYYY) : ");
-                    String newDate = inText.nextLine();
-                    appObj.setDate(newDate);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
-                    System.out.print(" Press [Enter] to continue");
-                    String enter = inText.nextLine();
+                    String date = ""; // Data holding
+                    int slot = 0; // Data holding
+                    while (true) {
+                        System.out.print("\f");
+                        System.out.println("+------------------------------------------+");
+                        System.out.println("|            Set Date and Time             |");
+                        System.out.println("+------------------------------------------+");
+                        boolean dateIsChoosen = false;
+                        System.out.print(" Date (DD/MM/YYYY) : ");
+                        date = inText.nextLine();
+                        System.out.println("+------------------------------------------+");
+                        while (true) {
+                            System.out.print("\f");
+                            System.out.println("+------------------------------------------+");
+                            System.out.println("|            Set Date and Time             |");
+                            System.out.println("+------------------------------------------+");
+                            System.out.println(" Date (DD/MM/YYYY) : "+date);
+                            System.out.println("+------------------------------------------+");
+                            int time = 1000;
+                            // A total of 6 slots, 1 hour each, from 10 am to 3 pm
+                            LinkedList slotList = new LinkedList();
+                            for (int i=0; i<6; i++) {
+                                boolean isExist = false;
+                                Appointment currentObj = (Appointment) list.getFirst();
+                                while (currentObj != null) {
+                                    if (currentObj.getDate().equals(date) && currentObj.getSlot() == (i+1)) {
+                                        isExist = true;
+                                    }
+                                    currentObj = (Appointment) list.getNext();
+                                }
+                                if (isExist == true) {
+                                    System.out.println(" Slot "+(i+1)+" is reserved [/]");
+                                    System.out.println("+------------------------------------------+");
+                                    slotList.addLast(1);
+                                }
+                                else {
+                                    System.out.println(" ["+time+"] Slot "+(i+1)+" is empty!");
+                                    System.out.println("+------------------------------------------+");
+                                    slotList.addLast(0);
+                                }
+                                time+=100;
+                            }
+                            System.out.print(" Choose available slot ('0' to back) : ");
+                            int slotOpt = inNum.nextInt();
+                            boolean isEmpty = true;
+                            if (slotOpt == 0) {
+                                break;
+                            }
+                            else if (slotOpt >= 1 && slotOpt <= 6) {
+                                int currentSlot = (int) slotList.getFirst();
+                                for (int i=1; i<=6; i++) {
+                                    if (i == slotOpt) {
+                                        if (currentSlot == 1) {
+                                            isEmpty = false;
+                                        }
+                                    }
+                                    if (i != 6) {
+                                        currentSlot = (int) slotList.getNext();
+                                    }
+                                }
+                                if (isEmpty == true) {
+                                    slot = slotOpt;
+                                    dateIsChoosen = true;
+                                    break;
+                                }
+                                else {
+                                    System.out.println("+------------------------------------------+");
+                                    System.out.println("|            Slot is reserved!             |");
+                                    System.out.println("+------------------------------------------+");
+                                    System.out.print(" Press [Enter] to continue");
+                                    String enter = inText.nextLine();
+                                }
+                            } else {
+                                System.out.println("+------------------------------------------+");
+                                System.out.println("|               Invalid key!               |");
+                                System.out.println("+------------------------------------------+");
+                                System.out.print(" Press [Enter] to continue");
+                                String enter = inText.nextLine();
+                            }
+                        }
+                        if (dateIsChoosen == true) {
+                            appObj.setDate(date);
+                            appObj.setSlot(slot);
+                            break;
+                        }
+                    }
                 }
                 else if (option == 'B' || option == 'b') {
-                    System.out.println(" Current time : "+appObj.getTime());
-                    System.out.print(" New date (24-hours format) : ");
-                    String newTime = inText.nextLine();
-                    appObj.setTime(newTime);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
-                    System.out.print(" Press [Enter] to continue");
-                    String enter = inText.nextLine();
-                }
-                else if (option == 'C' || option == 'c') {
                     while (true) {
                         // Choose doctor
                         int countDoc = 0;
