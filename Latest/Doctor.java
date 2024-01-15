@@ -23,8 +23,12 @@ public class Doctor
         this.specialty=specialty;
     }
     
+    public void setDocName(String docName) { this.docName=docName; }
+    public void setSpecialty(String specialty) { this.specialty=specialty; }
+    
     public String getDocID() { return this.docID; }
     public String getDocName() { return this.docName; }
+    public String getSpecialty() { return this.specialty; }
     
     // for unformatted data inspecting
     public String toString() {
