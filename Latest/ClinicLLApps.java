@@ -10,7 +10,7 @@ public class ClinicLLApps
     static LinkedList appLL = new LinkedList();
     static LinkedList patLL = new LinkedList();
     static LinkedList docLL = new LinkedList();
-    static LinkedList invLL = new LinkedList(); // to be determined
+    static LinkedList invLL = new LinkedList();
     
     static int sessionCode = 1; // 0-Terminate, 1-Idle, 2-Logged in
     static String SECURITY_KEY = "1"; // to be determined
@@ -30,8 +30,8 @@ public class ClinicLLApps
                     String docID = st.nextToken();
                     String date = st.nextToken();
                     int slot = Integer.parseInt(st.nextToken());
-                    String status = st.nextToken();
-                    appLL.addLast(new Appointment(appID,patID,docID,date,slot,status));
+                    String category = st.nextToken();
+                    appLL.addLast(new Appointment(appID,patID,docID,date,slot,category));
                 }
                 else if (dataType.equals("PATIENT")) {
                     String patID = st.nextToken();
@@ -44,6 +44,27 @@ public class ClinicLLApps
                     String name = st.nextToken();
                     String specialty = st.nextToken();
                     docLL.addLast(new Doctor(docID,name,specialty));
+                    System.out.println("Doc");
+                }
+                // NEW
+                else if (dataType.equals("INVOICE")) {
+                    String invID = st.nextToken();
+                    Patient pat = (Patient) getObjectByID(st.nextToken());
+                    Doctor doc = (Doctor) getObjectByID(st.nextToken());
+                    int payMethod = Integer.parseInt(st.nextToken());
+                    String payStatus = st.nextToken();
+                    // read new line to get appointment details
+                    data = br.readLine();
+                    StringTokenizer st2 = new StringTokenizer(data, ";");
+                    String type = st2.nextToken(); // Ignore
+                    String appID = st2.nextToken();
+                    String patID = st2.nextToken();
+                    String docID = st2.nextToken();
+                    String date = st2.nextToken();
+                    int slot = Integer.parseInt(st2.nextToken());
+                    String category = st2.nextToken();
+                    Appointment app = new Appointment(appID,patID,docID,date,slot,category);
+                    invLL.addLast(new Invoice(invID,app,pat,doc,payMethod,payStatus));
                 }
                 data = br.readLine();
             }
@@ -53,7 +74,7 @@ public class ClinicLLApps
         // MAIN PROCESSES
         while (sessionCode != 0) {
             if (sessionCode == 2) {
-                dashboard(appLL,patLL,docLL);
+                dashboard();
             }
             else {
                 login();
@@ -77,6 +98,11 @@ public class ClinicLLApps
             while (docObj != null) {
                 fw.write(docObj.txtFormat()+"\n");
                 docObj = (Doctor) docLL.getNext();
+            }
+            Invoice invObj = (Invoice) invLL.getFirst();
+            while (invObj != null) {
+                fw.write(invObj.txtFormat()+"\n");
+                invObj = (Invoice) invLL.getNext();
             }
             fw.close();
         }
@@ -121,7 +147,7 @@ public class ClinicLLApps
         }
     }
     
-    public static void dashboard(LinkedList appList,LinkedList patList,LinkedList docList) {
+    public static void dashboard() {
         System.out.print("\f");
         System.out.println("+------------------------------------------+");
         System.out.println("|                MAIN MENU                 |");
@@ -136,19 +162,19 @@ public class ClinicLLApps
         System.out.print(" Option : ");
         char option = inChar.next().charAt(0);
         if (option == 'A' || option == 'a') {
-            addData(appList,patList);
+            addData(appLL,patLL);
         }
         else if (option == 'B' || option == 'b') {
-            displayList(appList,patList);
+            displayList(appLL,patLL);
         }
         else if (option == 'C' || option == 'c') {
-            displayList(patList,null);
+            displayList(patLL,null);
         }
         else if (option == 'D' || option == 'd') {
-            // to be determined
+            displayList(invLL,null);
         }
         else if (option == 'E' || option == 'e') {
-            displayList(docList,null);
+            displayList(docLL,null);
         }
         else if (option == 'F' || option == 'f') {
             sessionCode = 1;
@@ -167,7 +193,7 @@ public class ClinicLLApps
         int floor = 0;
         
         // Filters - to be determined
-        boolean showCompleted = true;
+        
         while (true) {
             // Check for list type
             Object object = (Object) list.getFirst();
@@ -190,6 +216,13 @@ public class ClinicLLApps
                     System.out.println("|                DOCTOR LIST               |");
                     System.out.println("+------------------------------------------+");
                 }
+                // NEW
+                else if (object instanceof Invoice) {
+                    System.out.print("\f");
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|               INVOICE LIST               |");
+                    System.out.println("+------------------------------------------+");
+                }
             }
             else {
                 System.out.print("\f");
@@ -204,53 +237,20 @@ public class ClinicLLApps
             int counter = 0;
             // Check if the list is AppLL
             object = (Object) list.getFirst();
-            if (object instanceof Appointment) {
-                Appointment appObj = (Appointment) object;
-                while (counter != floor) {
-                    appObj = (Appointment) list.getNext();
-                    counter++;
-                }
-                while (appObj != null && counter < (page*10)) {
-                    if (showCompleted) {
-                        System.out.println(" "+(counter+1)+"] "+appObj.toString());
-                        System.out.println("+------------------------------------------+");
-                    }
-                    else {
-                        if (appObj.getStatus().equals("Pending")) {
-                            System.out.println(" "+(counter+1)+"] "+appObj.toString());
-                            System.out.println("+------------------------------------------+");
-                        }
-                    }
-                    appObj = (Appointment) list.getNext();
-                    counter++;
-                }
+            while (counter != floor) {
+                object = (Object) list.getNext();
+                counter++;
             }
-            else {
-                while (counter != floor) {
-                    object = (Object) list.getNext();
-                    counter++;
-                }
-                while (object != null && counter < (page*10)) {
-                    System.out.println(" "+(counter+1)+"] "+object.toString());
-                    object = (Object) list.getNext();
-                    counter++;
-                    System.out.println("+------------------------------------------+");
-                }
+            while (object != null && counter < (page*10)) {
+                System.out.println(" "+(counter+1)+"] "+object.toString());
+                object = (Object) list.getNext();
+                counter++;
+                System.out.println("+------------------------------------------+");
             }
             // Check total page
             System.out.println(" Enter index (1..) to choose -");
             if (page == 1) {
-                if (list.getFirst() instanceof Appointment) {
-                    if (showCompleted) {
-                        System.out.println(" [V] Next , [H] Home, [K] Hide \'Completed\'");
-                    }
-                    else {
-                        System.out.println(" [V] Next , [H] Home, [K] Show \'Completed\'");
-                    }
-                }
-                else {
-                    System.out.println(" [V] Next , [H] Home");
-                }
+                System.out.println(" [V] Next , [H] Home");
             }
             else {
                 System.out.println(" [C] Previous , [V] Next , [H] Home");
@@ -280,16 +280,6 @@ public class ClinicLLApps
             }
             else if (option.equalsIgnoreCase("H")) {
                 break;
-            }
-            else if (option.equalsIgnoreCase("K")) {
-                if (list.getFirst() instanceof Appointment) {
-                    if (showCompleted) {
-                        showCompleted = false;
-                    }
-                    else {
-                        showCompleted = true;
-                    }
-                }
             }
             else if (option.equalsIgnoreCase("S")) {
                 searchData(list,list2);
@@ -344,8 +334,12 @@ public class ClinicLLApps
                 System.out.println("+------------------------------------------+");
                 System.out.println("|     [A] Edit, [B] Delete, [C] Back       |");
                 System.out.println("+------------------------------------------+");
+                // NEW
+                System.out.println("|          [V] Verify Appointment          |");
+                System.out.println("+------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
+                System.out.println("+------------------------------------------+");
                 if (option == 'A' || option == 'a') {
                     editData(list,key);
                 }
@@ -356,6 +350,44 @@ public class ClinicLLApps
                 }
                 else if (option == 'C' || option == 'c') {
                     break;
+                }
+                // NEW
+                else if (option == 'V' || option == 'v') {
+                    System.out.print(" Are you sure? (Y/N) : ");
+                    char optVer = inChar.next().charAt(0);
+                    if (optVer == 'Y' || optVer == 'y') {
+                        // Appointment has been verified
+                        // Invoice is issued, and data has been removed
+                        // All data has been transferred to invoice
+                        Invoice inv = new Invoice("I"+generateID(invLL),appObj,patObj,docObj,0,"Not set");
+                        invLL.addFirst(inv);
+                        // Remove appointment
+                        LinkedList temp = new LinkedList();
+                        Appointment currApp = (Appointment) appLL.getFirst();
+                        while (currApp != null) {
+                            if (currApp.getAppID().equals(appObj.getAppID())) {
+                                // do nothing
+                            }
+                            else {
+                                temp.addLast(currApp);
+                            }
+                            currApp = (Appointment) appLL.getNext();
+                        }
+                        appLL.clear();
+                        currApp = (Appointment) temp.getFirst();
+                        while (currApp != null) {
+                            appLL.addLast(currApp);
+                            currApp = (Appointment) temp.getNext();
+                        }
+                        
+                        System.out.println("+------------------------------------------+");
+                        System.out.println("|     Appointment has been verified.       |");
+                        System.out.println("|           New invoice added!             |");
+                        System.out.println("+------------------------------------------+");
+                        System.out.print(" Press [Enter] to continue");
+                        String enter = inText.nextLine();
+                        break;
+                    }
                 }
                 else {
                     // display error
@@ -396,6 +428,33 @@ public class ClinicLLApps
                 System.out.println(" "+docObj.toStringFormatted());
                 System.out.println("+------------------------------------------+");
                 System.out.println("|            [A] Edit, [C] Back            |");
+                System.out.println("+------------------------------------------+");
+                System.out.print(" Option : ");
+                char option = inChar.next().charAt(0);
+                if (option == 'A' || option == 'a') {
+                    editData(list,key);
+                }
+                else if (option == 'C' || option == 'c') {
+                    break;
+                }
+                else {
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|               Invalid key!               |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
+            }
+            // NEW
+            else if (object instanceof Invoice) {
+                Invoice invObj = (Invoice) object;
+                System.out.print("\f");
+                System.out.println("+------------------------------------------+");
+                System.out.println("|              INVOICE DATA                |");
+                System.out.println("+------------------------------------------+");
+                System.out.println(" "+invObj.toStringFormatted());
+                System.out.println("+------------------------------------------+");
+                System.out.println("|          [A] Verify, [C] Back            |");
                 System.out.println("+------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
@@ -485,7 +544,7 @@ public class ClinicLLApps
                             slotList.addLast(1);
                         }
                         else {
-                            System.out.println(" ["+time+"] Slot "+(i+1)+" is empty!");
+                            System.out.println(" ["+time+"-"+(time+100)+"] Slot "+(i+1)+" is empty!");
                             System.out.println("+------------------------------------------+");
                             slotList.addLast(0);
                         }
@@ -588,9 +647,6 @@ public class ClinicLLApps
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
         }
-        else if (list.getFirst() instanceof Doctor) {
-            // 
-        }
     }
     
     // GENERATE RANDOM NUMBER FOR ID
@@ -623,6 +679,23 @@ public class ClinicLLApps
                         isExist = true;
                     }
                     patObj = (Patient) list.getNext();
+                }
+                if (isExist == false) {
+                    return randInt;
+                }
+            }
+            // NEW
+            else if (list.getFirst() instanceof Invoice) {
+                boolean isExist = false;
+                Random rand = new Random();
+                int randInt = rand.nextInt(100);
+                Invoice invObj = (Invoice) list.getFirst();
+                while (invObj != null) {
+                    int getID = Integer.parseInt(invObj.getInvID().substring(1));
+                    if (getID == randInt) {
+                        isExist = true;
+                    }
+                    invObj = (Invoice) list.getNext();
                 }
                 if (isExist == false) {
                     return randInt;
@@ -664,8 +737,7 @@ public class ClinicLLApps
                 System.out.println("    Time : "+appObj.getTime());
                 System.out.println(" B] Assigned Doctor : "+docObj.getDocName());
                 System.out.println(" E] Back");
-                System.out.println("+------------------------------------------+");
-                System.out.println(" Option : ");
+                System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option =='a') {
                     String date = ""; // Data holding
@@ -871,6 +943,44 @@ public class ClinicLLApps
                     break;
                 }
             }
+            // NEW
+            else if (object instanceof Invoice) {
+                Invoice invObj = (Invoice) object;
+                System.out.print("\f");
+                System.out.println("+------------------------------------------+");
+                System.out.println("|              VERIFY INVOICE              |");
+                System.out.println("+------------------------------------------+");
+                System.out.print(" Verify payment? (Y/N) : ");
+                char option = inChar.next().charAt(0);
+                System.out.println("+------------------------------------------+");
+                if (option == 'Y' || option =='y') {
+                    System.out.println(" Choose payment method,");
+                    System.out.println(" [1] Cash");
+                    System.out.println(" [2] Debit");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Option : ");
+                    int optPay = inNum.nextInt();
+                    // Set
+                    invObj.setPayMethod(optPay);
+                    invObj.setPayStatus("Confirmed");
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|             Payment verified!            |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                    break;
+                }
+                else if (option == 'N' || option == 'n') {
+                    break;
+                }
+                else {
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|               Invalid key!               |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
+            }
         }
     }
     
@@ -987,7 +1097,7 @@ public class ClinicLLApps
                     Appointment appObj = (Appointment) list.getFirst();
                     while (appObj != null) {
                         if (appObj.getDate().equalsIgnoreCase(keyword) || appObj.getTime().equalsIgnoreCase(keyword) ||
-                            appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getStatus().equalsIgnoreCase(keyword)) {
+                            appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getCategory().equalsIgnoreCase(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+appObj.toString()); 
                             System.out.println("+------------------------------------------+");
                             keyFound.addLast(counter);
