@@ -382,7 +382,7 @@ public class ClinicLLApps
                         // Appointment has been verified
                         // Invoice is issued, and data has been removed
                         // All data has been transferred to invoice
-                        Invoice inv = new Invoice("I"+generateID(invLL),appObj,patObj,docObj,0,"Not set");
+                        Invoice inv = new Invoice("I"+generateID(invLL),appObj,patObj,docObj,0,"Pending");
                         invLL.addFirst(inv);
                         // Remove appointment
                         LinkedList temp = new LinkedList();
@@ -1251,7 +1251,7 @@ public class ClinicLLApps
                         invObj = (Invoice) list.getNext();
                     }
                 }
-                
+                //delete
                 if (countFound == 0) {
                     System.out.println(" No data matches with the keyword : "+keyword); 
                     System.out.println("+------------------------------------------+");
