@@ -37,13 +37,15 @@ public class ClinicLLApps
                     String patID = st.nextToken();
                     String NRIC = st.nextToken();
                     String patName = st.nextToken();
-                    patLL.addLast(new Patient(patID,NRIC,patName));
+                    String patPhone = st.nextToken();
+                    patLL.addLast(new Patient(patID,NRIC,patName,patPhone));
                 }
                 else if (dataType.equals("DOCTOR")) {
                     String docID = st.nextToken();
                     String name = st.nextToken();
                     String specialty = st.nextToken();
-                    docLL.addLast(new Doctor(docID,name,specialty));
+                    String docPhone = st.nextToken();
+                    docLL.addLast(new Doctor(docID,name,specialty,docPhone));
                     System.out.println("Doc");
                 }
                 // NEW
@@ -490,8 +492,12 @@ public class ClinicLLApps
             if (!patientIsExist(list2,NRIC)) {
                 System.out.print(" Patient Name : ");
                 String patName = inText.nextLine();
-                pat = new Patient("P"+generateID(list),NRIC,patName);
+                // NEW
+                System.out.print(" Patient phone number : ");
+                String patPhone = inText.nextLine();
+                pat = new Patient("P"+generateID(list),NRIC,patName,patPhone);
                 patLL.addLast(pat);
+                System.out.println("+------------------------------------------+");
             } else {
                 Patient patObj = (Patient) list2.getFirst();
                 while (patObj != null) {
@@ -507,6 +513,22 @@ public class ClinicLLApps
                 System.out.print(" Press [Enter] to continue");
                 String enter = inText.nextLine();
             }
+            // NEW
+            // Choose category
+            String category = "Not set";
+            System.out.println(" Choose category,");
+            System.out.println(" [1] Medical Checkup");
+            System.out.println(" [2] Pregnancy Test");
+            System.out.println(" [3] Blood Test");
+            System.out.println(" [4] Eye Test");
+            System.out.println(" [5] Vaccination");
+            System.out.println("+------------------------------------------+");
+            int option = inNum.nextInt();
+            if (option == 1) { category = "Medical Checkup"; }
+            else if (option == 2) { category = "Pregnancy Test"; }
+            else if (option == 3) { category = "Blood Test"; }
+            else if (option == 4) { category = "Eye Test"; }
+            else { category = "Vaccination"; }
             // Determine if any slot for the day is available, else get another date
             String date = ""; // Data holding
             int slot = 0; // Data holding
@@ -608,11 +630,11 @@ public class ClinicLLApps
                     System.out.println("+------------------------------------------+");
                 }
                 System.out.print(" Option : ");
-                int option = inNum.nextInt();
-                if (option <= counter && option >= 0) {
+                int optionDoc = inNum.nextInt();
+                if (optionDoc <= counter && optionDoc >= 0) {
                     int counter2 = 1;
                     docObj = (Doctor) docLL.getFirst();
-                    while (counter2 < option) {
+                    while (counter2 < optionDoc) {
                         docObj = (Doctor) docLL.getNext();
                         counter2++;
                     }
@@ -628,7 +650,7 @@ public class ClinicLLApps
                 }
             }
             // add to list
-            app = new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,slot,"Pending");
+            app = new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,slot,category);
             list.addLast(app);
             System.out.print("\f");
             System.out.println("+------------------------------------------+");
@@ -875,7 +897,9 @@ public class ClinicLLApps
                 System.out.println("+------------------------------------------+");
                 System.out.println(" A] NRIC : "+patObj.getNRIC());
                 System.out.println(" B] Name : "+patObj.getPatName());
-                System.out.println(" C] Back");
+                // NEW
+                System.out.println(" C] Phone : "+patObj.getPatPhone());
+                System.out.println(" D] Back");
                 System.out.println("+------------------------------------------+");
                 System.out.println(" Option : ");
                 char option = inChar.next().charAt(0);
@@ -901,6 +925,18 @@ public class ClinicLLApps
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
+                // NEW
+                else if (option == 'C' || option == 'c') {
+                    System.out.println(" Current phone : "+patObj.getPatPhone());
+                    System.out.print(" New phone : ");
+                    String newPhone = inText.nextLine();
+                    patObj.setPatPhone(newPhone);
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|           Data has been edited!          |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
                 else {
                     break;
                 }
@@ -913,7 +949,9 @@ public class ClinicLLApps
                 System.out.println("+------------------------------------------+");
                 System.out.println(" A] Name : "+docObj.getDocName());
                 System.out.println(" B] Specialty : "+docObj.getSpecialty());
-                System.out.println(" C] Back");
+                // NEW
+                System.out.println(" C] Phone : "+docObj.getDocPhone());
+                System.out.println(" D] Back");
                 System.out.println("+------------------------------------------+");
                 System.out.println(" Option : ");
                 char option = inChar.next().charAt(0);
@@ -933,6 +971,18 @@ public class ClinicLLApps
                     System.out.print(" New specialty : ");
                     String newSpec = inText.nextLine();
                     docObj.setSpecialty(newSpec);
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|           Data has been edited!          |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
+                //NEW
+                else if (option == 'C' || option == 'c') {
+                    System.out.println(" Current phone : "+docObj.getDocPhone());
+                    System.out.print(" New phone : ");
+                    String newPhone = inText.nextLine();
+                    docObj.setDocPhone(newPhone);
                     System.out.println("+------------------------------------------+");
                     System.out.println("|           Data has been edited!          |");
                     System.out.println("+------------------------------------------+");
