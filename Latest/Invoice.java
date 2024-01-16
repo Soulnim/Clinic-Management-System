@@ -27,6 +27,7 @@ public class Invoice
     public void setPayStatus(String ps) { this.paymentStatus=ps; }
     
     public String getInvID() { return this.invID; }
+    public String getPatNRIC() { return this.pat.getNRIC(); }
     public String getPayMethod() {
         String desc = "";
         if (paymentMethod==1) { desc="Cash"; }
@@ -39,6 +40,9 @@ public class Invoice
         String cat = this.app.getCategory();
         if (cat.equals("Medical Checkup")) { amount = 50; }
         else if (cat.equals("Pregnancy Test")) { amount = 60; }
+        else if (cat.equals("Eye Test")) { amount = 30; }
+        else if (cat.equals("Blood Test")) { amount = 30; }
+        else if (cat.equals("Vaccination")) { amount = 50; }
         return amount;
     }
     
