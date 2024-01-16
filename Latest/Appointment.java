@@ -37,6 +37,7 @@ public class Appointment
     public void setDocID(String docID) { this.docID=docID; }
     public void setDate(String date) { this.date=date; }
     public void setSlot(int slot) { this.slot=slot; }
+    public void setCategory(String category) { this.category=category; }
     
     public String getAppID() { return this.appID; }
     public String getPatID() { return this.patID; }
@@ -55,18 +56,18 @@ public class Appointment
     
     // for unformatted data inspecting
     public String toString() {
-        return " | Date : "+this.date+" | Time : "+this.getTime()+" | Status : "+this.category;
+        return " | Date and Time : "+this.date+" ("+this.getTime()+")";
     }
     public String toStringAll() {
         return " App ID : "+this.appID+" | Pat ID : "+this.patID+" | Doc ID : "+this.docID
-            +" | Date : "+this.date+" | Time : "+this.getTime()+" | Slot : "+this.slot+" | Status : "+this.category;
+            +" | Date : "+this.date+" | Time : "+this.getTime()+" | Slot : "+this.slot+" | Category : "+this.category;
     }
     // for displaying data in beautified format
     public String toStringFormatted() {
         // Patient and Doctor's data is not local
         return " Appointment ID : "+this.appID+
             "\n Date : "+this.date+" | Time : "+this.getTime()+
-            "\n Status : "+this.category;
+            "\n Category : "+this.category;
     }
     // for storing data to clinicdata.txt
     public String txtFormat() {
