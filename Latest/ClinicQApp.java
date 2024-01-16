@@ -484,13 +484,29 @@ public class ClinicQApps
                 System.out.println("|                      INVOICE DATA                       |");
                 System.out.println("+---------------------------------------------------------+");
                 System.out.println(" "+invObj.toStringFormatted());
-                System.out.println("+---------------------------------------------------------+");
-                System.out.println("|                  [A] Verify, [C] Back                   |");
-                System.out.println("+---------------------------------------------------------+");
+                if (invObj.getPayStatus().equals("Pending")) {
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                  [A] Verify, [C] Back                   |");
+                    System.out.println("+---------------------------------------------------------+");
+                }
+                else {
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                        [C] Back                         |");
+                    System.out.println("+---------------------------------------------------------+");
+                }
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option == 'a') {
-                    editData(list,key);
+                    if (invObj.getPayStatus().equals("Pending")) {
+                        editData(list,key);
+                    }
+                    else {
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|                      Invalid key!                       |");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.print(" Press [Enter] to continue");
+                        String enter = inText.nextLine();
+                    }
                 }
                 else if (option == 'C' || option == 'c') {
                     break;
