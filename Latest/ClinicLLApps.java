@@ -48,11 +48,10 @@ public class ClinicLLApps
                     docLL.addLast(new Doctor(docID,name,specialty,docPhone));
                     System.out.println("Doc");
                 }
-                // NEW
                 else if (dataType.equals("INVOICE")) {
                     String invID = st.nextToken();
-                    Patient pat = (Patient) getObjectByID(st.nextToken());
-                    Doctor doc = (Doctor) getObjectByID(st.nextToken());
+                    Patient pat = (Patient) getObjectByID(st.nextToken(),patLL);
+                    Doctor doc = (Doctor) getObjectByID(st.nextToken(),docLL);
                     int payMethod = Integer.parseInt(st.nextToken());
                     String payStatus = st.nextToken();
                     // read new line to get appointment details
@@ -218,7 +217,6 @@ public class ClinicLLApps
                     System.out.println("|                DOCTOR LIST               |");
                     System.out.println("+------------------------------------------+");
                 }
-                // NEW
                 else if (object instanceof Invoice) {
                     System.out.print("\f");
                     System.out.println("+------------------------------------------+");
@@ -238,16 +236,41 @@ public class ClinicLLApps
             
             int counter = 0;
             // Check if the list is AppLL
-            object = (Object) list.getFirst();
-            while (counter != floor) {
-                object = (Object) list.getNext();
-                counter++;
+            if (object instanceof Appointment) {
+                // Store patient data in temporary LL
+                LinkedList tempPatLL = new LinkedList();
+                Patient currPat = (Patient) patLL.getFirst();
+                while (currPat != null) {
+                    tempPatLL.addLast(currPat);
+                    currPat = (Patient) patLL.getNext();
+                }
+                // Proceed
+                Appointment appObj = (Appointment) list.getFirst();
+                while (counter != floor) {
+                    appObj = (Appointment) list.getNext();
+                    counter++;
+                }
+                while (appObj != null && counter < (page*10)) {
+                    String patID = appObj.getPatID();
+                    Patient pat = (Patient) getObjectByID(patID,tempPatLL);
+                    System.out.println(" "+(counter+1)+"] NRIC : "+pat.getNRIC()+appObj.toString());
+                    appObj = (Appointment) list.getNext();
+                    counter++;
+                    System.out.println("+------------------------------------------+");
+                }
             }
-            while (object != null && counter < (page*10)) {
-                System.out.println(" "+(counter+1)+"] "+object.toString());
-                object = (Object) list.getNext();
-                counter++;
-                System.out.println("+------------------------------------------+");
+            else {
+                object = (Object) list.getFirst();
+                while (counter != floor) {
+                    object = (Object) list.getNext();
+                    counter++;
+                }
+                while (object != null && counter < (page*10)) {
+                    System.out.println(" "+(counter+1)+"] "+object.toString());
+                    object = (Object) list.getNext();
+                    counter++;
+                    System.out.println("+------------------------------------------+");
+                }
             }
             // Check total page
             System.out.println(" Enter index (1..) to choose -");
@@ -322,8 +345,8 @@ public class ClinicLLApps
         while (true) {
             if (object instanceof Appointment) {
                 Appointment appObj = (Appointment) object;
-                Patient patObj = (Patient) getObjectByID(appObj.getPatID());
-                Doctor docObj = (Doctor) getObjectByID(appObj.getDocID());
+                Patient patObj = (Patient) getObjectByID(appObj.getPatID(),patLL);
+                Doctor docObj = (Doctor) getObjectByID(appObj.getDocID(),docLL);
                 System.out.print("\f");
                 System.out.println("+------------------------------------------+");
                 System.out.println("|             APPOINTMENT DATA             |");
@@ -336,7 +359,6 @@ public class ClinicLLApps
                 System.out.println("+------------------------------------------+");
                 System.out.println("|     [A] Edit, [B] Delete, [C] Back       |");
                 System.out.println("+------------------------------------------+");
-                // NEW
                 System.out.println("|          [V] Verify Appointment          |");
                 System.out.println("+------------------------------------------+");
                 System.out.print(" Option : ");
@@ -353,7 +375,6 @@ public class ClinicLLApps
                 else if (option == 'C' || option == 'c') {
                     break;
                 }
-                // NEW
                 else if (option == 'V' || option == 'v') {
                     System.out.print(" Are you sure? (Y/N) : ");
                     char optVer = inChar.next().charAt(0);
@@ -447,7 +468,6 @@ public class ClinicLLApps
                     String enter = inText.nextLine();
                 }
             }
-            // NEW
             else if (object instanceof Invoice) {
                 Invoice invObj = (Invoice) object;
                 System.out.print("\f");
@@ -492,7 +512,6 @@ public class ClinicLLApps
             if (!patientIsExist(list2,NRIC)) {
                 System.out.print(" Patient Name : ");
                 String patName = inText.nextLine();
-                // NEW
                 System.out.print(" Patient phone number : ");
                 String patPhone = inText.nextLine();
                 pat = new Patient("P"+generateID(list),NRIC,patName,patPhone);
@@ -507,15 +526,14 @@ public class ClinicLLApps
                     patObj = (Patient) list2.getNext();
                 }
                 System.out.println(" Patient Name : "+pat.getPatName());
+                System.out.println(" Phone : "+pat.getPatPhone());
                 System.out.println("+------------------------------------------+");
                 System.out.println("|             Patient exist!               |");
                 System.out.println("+------------------------------------------+");
-                System.out.print(" Press [Enter] to continue");
-                String enter = inText.nextLine();
             }
-            // NEW
             // Choose category
             String category = "Not set";
+            System.out.println("+---------------------------------------------------------+");
             System.out.println(" Choose category,");
             System.out.println(" [1] Medical Checkup");
             System.out.println(" [2] Pregnancy Test");
@@ -706,7 +724,6 @@ public class ClinicLLApps
                     return randInt;
                 }
             }
-            // NEW
             else if (list.getFirst() instanceof Invoice) {
                 boolean isExist = false;
                 Random rand = new Random();
@@ -749,7 +766,7 @@ public class ClinicLLApps
         while (true) {
             if (object instanceof Appointment) {
                 Appointment appObj = (Appointment) object;
-                Doctor docObj = (Doctor) getObjectByID(appObj.getDocID());
+                Doctor docObj = (Doctor) getObjectByID(appObj.getDocID(),docLL);
                 System.out.print("\f");
                 System.out.println("+------------------------------------------+");
                 System.out.println("|           EDIT APPOINTMENT DATA          |");
@@ -758,6 +775,7 @@ public class ClinicLLApps
                 System.out.println("    Date : "+appObj.getDate());
                 System.out.println("    Time : "+appObj.getTime());
                 System.out.println(" B] Assigned Doctor : "+docObj.getDocName());
+                System.out.println(" C] Category : "+appObj.getCategory());
                 System.out.println(" E] Back");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
@@ -885,6 +903,30 @@ public class ClinicLLApps
                         }
                     }
                 }
+                else if (option == 'C' || option == 'c') {
+                    System.out.println(" Current category : "+appObj.getCategory());
+                    String category = "Not set";
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println(" Choose category,");
+                    System.out.println(" [1] Medical Checkup");
+                    System.out.println(" [2] Pregnancy Test");
+                    System.out.println(" [3] Blood Test");
+                    System.out.println(" [4] Eye Test");
+                    System.out.println(" [5] Vaccination");
+                    System.out.println("+------------------------------------------+");
+                    int optCat = inNum.nextInt();
+                    if (optCat == 1) { category = "Medical Checkup"; }
+                    else if (optCat == 2) { category = "Pregnancy Test"; }
+                    else if (optCat == 3) { category = "Blood Test"; }
+                    else if (optCat == 4) { category = "Eye Test"; }
+                    else { category = "Vaccination"; }
+                    appObj.setCategory(category);
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|           Data has been edited!          |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
                 else {
                     break;
                 }
@@ -897,7 +939,6 @@ public class ClinicLLApps
                 System.out.println("+------------------------------------------+");
                 System.out.println(" A] NRIC : "+patObj.getNRIC());
                 System.out.println(" B] Name : "+patObj.getPatName());
-                // NEW
                 System.out.println(" C] Phone : "+patObj.getPatPhone());
                 System.out.println(" D] Back");
                 System.out.println("+------------------------------------------+");
@@ -925,7 +966,6 @@ public class ClinicLLApps
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
-                // NEW
                 else if (option == 'C' || option == 'c') {
                     System.out.println(" Current phone : "+patObj.getPatPhone());
                     System.out.print(" New phone : ");
@@ -949,7 +989,6 @@ public class ClinicLLApps
                 System.out.println("+------------------------------------------+");
                 System.out.println(" A] Name : "+docObj.getDocName());
                 System.out.println(" B] Specialty : "+docObj.getSpecialty());
-                // NEW
                 System.out.println(" C] Phone : "+docObj.getDocPhone());
                 System.out.println(" D] Back");
                 System.out.println("+------------------------------------------+");
@@ -977,7 +1016,6 @@ public class ClinicLLApps
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
-                //NEW
                 else if (option == 'C' || option == 'c') {
                     System.out.println(" Current phone : "+docObj.getDocPhone());
                     System.out.print(" New phone : ");
@@ -993,7 +1031,6 @@ public class ClinicLLApps
                     break;
                 }
             }
-            // NEW
             else if (object instanceof Invoice) {
                 Invoice invObj = (Invoice) object;
                 System.out.print("\f");
@@ -1091,32 +1128,32 @@ public class ClinicLLApps
     }
     
     // Getting specific data by ID
-    public static Object getObjectByID(String id) {
+    public static Object getObjectByID(String id, LinkedList list) {
         if (id.substring(0,1).equals("A")) {
-            Appointment appObj = (Appointment) appLL.getFirst();
+            Appointment appObj = (Appointment) list.getFirst();
             while (appObj != null) {
                 if (appObj.getAppID().equals(id)) {
                     return appObj;
                 }
-                appObj = (Appointment) appLL.getNext();
+                appObj = (Appointment) list.getNext();
             }
         }
         else if (id.substring(0,1).equals("P")) {
-            Patient patObj = (Patient) patLL.getFirst();
+            Patient patObj = (Patient) list.getFirst();
             while (patObj != null) {
                 if (patObj.getPatID().equals(id)) {
                     return patObj;
                 }
-                patObj = (Patient) patLL.getNext();
+                patObj = (Patient) list.getNext();
             }
         }
         else if (id.substring(0,1).equals("D")) {
-            Doctor docObj = (Doctor) docLL.getFirst();
+            Doctor docObj = (Doctor) list.getFirst();
             while (docObj != null) {
                 if (docObj.getDocID().equals(id)) {
                     return docObj;
                 }
-                docObj = (Doctor) docLL.getNext();
+                docObj = (Doctor) list.getNext();
             }
         }
         return null;
@@ -1185,6 +1222,19 @@ public class ClinicLLApps
                         docObj = (Doctor) list.getNext();
                     }
                 }
+                else if (list.getFirst() instanceof Invoice) {
+                    Invoice invObj = (Invoice) list.getFirst();
+                    while (invObj != null) {
+                        if (invObj.getInvID().equalsIgnoreCase(keyword) || invObj.getPatNRIC().equalsIgnoreCase(keyword)) {
+                            System.out.println(" "+(countFound+1)+"] "+invObj.toString()); 
+                            System.out.println("+------------------------------------------+");
+                            keyFound.addLast(counter);
+                            countFound++;
+                        }
+                        counter++;
+                        invObj = (Invoice) list.getNext();
+                    }
+                }
                 
                 if (countFound == 0) {
                     System.out.println(" No data matches with the keyword : "+keyword); 
@@ -1224,14 +1274,5 @@ public class ClinicLLApps
                 }
             }
         }
-    }
-    
-    // PAUSE, FOR DEBUGGING - WILL BE DELETED SOON
-    public static void pause() {
-        System.out.println("+------------------------------------------+");
-        System.out.println("|                  PAUSED!                 |");
-        System.out.println("+------------------------------------------+");
-        System.out.print(" Press [Enter] to continue");
-        String enter = inText.nextLine();
     }
 }
