@@ -29,21 +29,42 @@ public class ClinicQApps
                     String patID = st.nextToken();
                     String docID = st.nextToken();
                     String date = st.nextToken();
-                    String time = st.nextToken();
+                    int slot = Integer.parseInt(st.nextToken());
                     String status = st.nextToken();
-                    appQueue.enqueue(new Appointment(appID,patID,docID,date,time,status));
+                    appQueue.enqueue(new Appointment(appID,patID,docID,date,slot,status));
                 }
                 else if (dataType.equals("PATIENT")) {
                     String patID = st.nextToken();
                     String NRIC = st.nextToken();
                     String patName = st.nextToken();
-                    patQueue.enqueue(new Patient(patID,NRIC,patName));
+                    String patPhone = st.nextToken();
+                    patQueue.enqueue(new Patient(patID,NRIC,patName,patPhone));
                 }
                 else if (dataType.equals("DOCTOR")) {
                     String docID = st.nextToken();
                     String name = st.nextToken();
                     String specialty = st.nextToken();
-                    docQueue.enqueue(new Doctor(docID,name,specialty));
+                    String docPhone = st.nextToken();
+                    docQueue.enqueue(new Doctor(docID,name,specialty,docPhone));
+                }
+                else if (dataType.equals("INVOICE")) {
+                    String invID = st.nextToken();
+                    Patient pat = (Patient) getObjectByID(st.nextToken(),patQueue);
+                    Doctor doc = (Doctor) getObjectByID(st.nextToken(),docQueue);
+                    int payMethod = Integer.parseInt(st.nextToken());
+                    String payStatus = st.nextToken();
+                    // read new line to get appointment details
+                    data = br.readLine();
+                    StringTokenizer st2 = new StringTokenizer(data, ";");
+                    String type = st2.nextToken(); // Ignore
+                    String appID = st2.nextToken();
+                    String patID = st2.nextToken();
+                    String docID = st2.nextToken();
+                    String date = st2.nextToken();
+                    int slot = Integer.parseInt(st2.nextToken());
+                    String category = st2.nextToken();
+                    Appointment app = new Appointment(appID,patID,docID,date,slot,category);
+                    invQueue.enqueue(new Invoice(invID,app,pat,doc,payMethod,payStatus));
                 }
                 data = br.readLine();
             }
@@ -75,6 +96,10 @@ public class ClinicQApps
                 Doctor docObj = (Doctor) docQueue.dequeue();
                 fw.write(docObj.txtFormat()+"\n");
             }
+            while (!invQueue.isEmpty()) {
+                Invoice invObj = (Invoice) invQueue.dequeue();
+                fw.write(invObj.txtFormat()+"\n");
+            }
             fw.close();
         }
         catch (IOException e) {
@@ -85,34 +110,34 @@ public class ClinicQApps
     // LOGIN
     public static void login() {
         System.out.print("\f");
-        System.out.println("+------------------------------------------+");
-        System.out.println("|                 LOGIN                    |");
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|                         LOGIN                           |");
+        System.out.println("+---------------------------------------------------------+");
         System.out.print(" Enter security key ('0' to exit) : ");
         String secKey = inText.nextLine();
         if (secKey.equals("0")) {
             sessionCode = 0;
             System.out.print("\f");
-            System.out.println("+------------------------------------------+");
-            System.out.println("|           Session Terminated             |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                    Session Terminated                   |");
+            System.out.println("+---------------------------------------------------------+");
             return;
         }
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
         System.out.print(" Enter password : ");
         String pass = inText.nextLine();
         if (secKey.equals(SECURITY_KEY) && pass.equals(PASSWORD)) {
             sessionCode = 2;
-            System.out.println("+------------------------------------------+");
-            System.out.println("|         Logged in successfully!          |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                Logged in successfully!                  |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
         }
         else {
-            System.out.println("+------------------------------------------+");
-            System.out.println("|     Invalid security key or password!    |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|            Invalid security key or password!            |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
         }
@@ -120,16 +145,16 @@ public class ClinicQApps
     
     public static void dashboard(Queue appQueue, Queue patQueue, Queue docQueue) {
         System.out.print("\f");
-        System.out.println("+------------------------------------------+");
-        System.out.println("|                MAIN MENU                 |");
-        System.out.println("+------------------------------------------+");
-        System.out.println("|     A] Schedule New Appointment          |");
-        System.out.println("|     B] Manage Appointment                |");
-        System.out.println("|     C] Manage Patient                    |");
-        System.out.println("|     D] Manage Invoice                    |");
-        System.out.println("|     E] View Doctor's Info                |");
-        System.out.println("|     F] Exit                              |");
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|                       MAIN MENU                         |");
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|     A] Schedule New Appointment                         |");
+        System.out.println("|     B] Manage Appointment                               |");
+        System.out.println("|     C] Manage Patient                                   |");
+        System.out.println("|     D] Manage Invoice                                   |");
+        System.out.println("|     E] Manage Doctor                                    |");
+        System.out.println("|     F] Exit                                             |");
+        System.out.println("+---------------------------------------------------------+");
         System.out.print(" Option : ");
         char option = inChar.next().charAt(0);
         if (option == 'A' || option == 'a') {
@@ -142,7 +167,7 @@ public class ClinicQApps
             displayList(patQueue,null);
         }
         else if (option == 'D' || option == 'd') {
-            // to be determined
+            displayList(invQueue,null);
         }
         else if (option == 'E' || option == 'e') {
             displayList(docQueue,null);
@@ -151,9 +176,9 @@ public class ClinicQApps
             sessionCode = 1;
         }
         else {
-            System.out.println("+------------------------------------------+");
-            System.out.println("|               Invalid key!               |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                      Invalid key!                       |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
         }
@@ -162,7 +187,6 @@ public class ClinicQApps
     public static void displayList(Queue list1, Queue list2) {
         int page = 1;
         int floor = 0;
-        boolean showCompleted = true;
         
         while (true) {
             // Check for queue type
@@ -170,62 +194,78 @@ public class ClinicQApps
             if (object != null) {
                 if (object instanceof Appointment) {
                     System.out.print("\f");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|             APPOINTMENT LIST             |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                    APPOINTMENT LIST                     |");
+                    System.out.println("+---------------------------------------------------------+");
                 } else if (object instanceof Patient) {
                     System.out.print("\f");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               PATIENT LIST               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                      PATIENT LIST                       |");
+                    System.out.println("+---------------------------------------------------------+");
                 } else if (object instanceof Doctor) {
                     System.out.print("\f");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                       DOCTOR LIST                       |");
+                    System.out.println("+---------------------------------------------------------+");
+                }
+                else if (object instanceof Invoice) {
+                    System.out.print("\f");
                     System.out.println("+------------------------------------------+");
-                    System.out.println("|                DOCTOR LIST               |");
+                    System.out.println("|               INVOICE LIST               |");
                     System.out.println("+------------------------------------------+");
                 }
             } else {
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|              List is empty!              |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                      List is empty!                     |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Press [Enter] to continue");
                 String enter = inText.nextLine();
                 return;
             }
 
             int counter = 0;
-            // Check if the queue is appQueue
-            object = (Object) list1.getFront();
-            if (object instanceof Appointment) {
-                Queue tempApp = new Queue();
-                Queue tempPat = new Queue();
+            // Set page and its displayed data
+            Queue temp = new Queue();
+            if (list1.getFront() instanceof Appointment) {
+                // Store patient data in temporary Queue
+                Queue tempp = new Queue();
+                Queue tempPatQ = new Queue();
+                while (!patQueue.isEmpty()) {
+                    Patient currPat = (Patient) patQueue.dequeue();
+                    tempPatQ.enqueue(currPat);
+                    tempp.enqueue(currPat);
+                }
+                while (!tempp.isEmpty()) {
+                    patQueue.enqueue(tempp.dequeue());
+                }
+                // Proceed
                 while (!list1.isEmpty() && counter != floor) {
-                    Object current = (Object) list1.dequeue();
-                    tempApp.enqueue(current);
+                    Appointment appObj = (Appointment) list1.dequeue();
+                    temp.enqueue(appObj);
                     counter++;
                 }
                 while (!list1.isEmpty() && counter < (page * 10)) {
                     Appointment appObj = (Appointment) list1.dequeue();
-                    tempApp.enqueue(appObj);
-                    if (showCompleted || appObj.getStatus().equals("Pending")) {
-                        System.out.println(" " + (counter + 1) + "] " + appObj.toString());
-                        System.out.println("+------------------------------------------+");
-                    }
+                    String patID = appObj.getPatID();
+                    Patient pat = (Patient) getObjectByID(patID,tempPatQ);
+                    temp.enqueue(appObj);
+                    System.out.println(" "+(counter+1)+"] NRIC : "+pat.getNRIC()+appObj.toString());
                     counter++;
+                    System.out.println("+---------------------------------------------------------+");
+                }
+                while (!list1.isEmpty()) {
+                    temp.enqueue(list1.dequeue());
                 }
                 // store temp's data back to its original list
-                while (!tempApp.isEmpty()) {
-                    list1.enqueue(tempApp.dequeue());
+                while (!temp.isEmpty()) {
+                    list1.enqueue(temp.dequeue());
                 }
-                while (!tempPat.isEmpty()) {
-                    list2.enqueue(tempPat.dequeue());
-                }
-            } else {
-                Queue temp = new Queue();
+            }
+            else {
                 while (!list1.isEmpty() && counter != floor) {
-                    Object current = list1.dequeue();
-                    temp.enqueue(current);
+                    object = list1.dequeue();
+                    temp.enqueue(object);
                     counter++;
                 }
                 while (!list1.isEmpty() && counter < (page * 10)) {
@@ -233,7 +273,10 @@ public class ClinicQApps
                     temp.enqueue(object);
                     System.out.println(" " + (counter + 1) + "] " + object.toString());
                     counter++;
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                }
+                while (!list1.isEmpty()) {
+                    temp.enqueue(list1.dequeue());
                 }
                 // store temp's data back to its original list
                 while (!temp.isEmpty()) {
@@ -244,21 +287,13 @@ public class ClinicQApps
             // Check total page
             System.out.println(" Enter index (1..) to choose -");
             if (page == 1) {
-                if (object instanceof Appointment) {
-                    if (showCompleted) {
-                        System.out.println(" [V] Next , [H] Home, [K] Hide 'Completed'");
-                    } else {
-                        System.out.println(" [V] Next , [H] Home, [K] Show 'Completed'");
-                    }
-                } else {
-                    System.out.println(" [V] Next , [H] Home");
-                }
+                System.out.println(" [V] Next , [H] Home");
             } else {
                 System.out.println(" [C] Previous , [V] Next , [H] Home");
             }
-            System.out.println("+------------------------------------------+ Page : "+page);
-            System.out.println("|             [S] Search Data              |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+ Page : "+page);
+            System.out.println("|                    [S] Search Data                      |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Option : ");
             String option = inText.nextLine();
             if (option.equalsIgnoreCase("V")) {
@@ -266,9 +301,9 @@ public class ClinicQApps
                 floor += 10;
             } else if (option.equalsIgnoreCase("C")) {
                 if (page - 1 < 1) {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|            Page limit reached!           |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                   Page limit reached!                   |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 } else {
@@ -277,11 +312,6 @@ public class ClinicQApps
                 }
             } else if (option.equalsIgnoreCase("H")) {
                 break;
-            }
-            else if (option.equalsIgnoreCase("K")) {
-                if (object instanceof Appointment) {
-                    showCompleted = !showCompleted;
-                }
             }
             else if (option.equalsIgnoreCase("S")) {
                 searchData(list1,list2);
@@ -293,16 +323,16 @@ public class ClinicQApps
                         displayData(list1, key);
                     }
                     else {
-                        System.out.println("+------------------------------------------+");
-                        System.out.println("|               Invalid key!               |");
-                        System.out.println("+------------------------------------------+");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|                      Invalid key!                       |");
+                        System.out.println("+---------------------------------------------------------+");
                         System.out.print(" Press [Enter] to continue");
                         String enter = inText.nextLine();
                     }
                 } catch (NumberFormatException e) {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                      Invalid key!                       |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -329,20 +359,22 @@ public class ClinicQApps
         while (true) {
             if (object instanceof Appointment) {
                 Appointment appObj = (Appointment) object;
-                Patient patObj = (Patient) getObjectByID(appObj.getPatID());
-                Doctor docObj = (Doctor) getObjectByID(appObj.getDocID());
+                Patient patObj = (Patient) getObjectByID(appObj.getPatID(),patQueue);
+                Doctor docObj = (Doctor) getObjectByID(appObj.getDocID(),docQueue);
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|             APPOINTMENT DATA             |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                    APPOINTMENT DATA                     |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(appObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(patObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(docObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
-                System.out.println("|     [A] Edit, [B] Delete, [C] Back       |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|             [A] Edit, [B] Delete, [C] Back              |");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                 [V] Verify Appointment                  |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option == 'a') {
@@ -356,6 +388,39 @@ public class ClinicQApps
                 else if (option == 'C' || option == 'c') {
                     break;
                 }
+                else if (option == 'V' || option == 'v') {
+                    System.out.print(" Are you sure? (Y/N) : ");
+                    char optVer = inChar.next().charAt(0);
+                    if (optVer == 'Y' || optVer == 'y') {
+                        // Appointment has been verified
+                        // Invoice is issued, and data has been removed
+                        // All data has been transferred to invoice
+                        Invoice inv = new Invoice("I"+generateID(invQueue),appObj,patObj,docObj,0,"Not set");
+                        invQueue.enqueue(inv);
+                        // Remove appointment
+                        Queue tempApp = new Queue();
+                        while (!appQueue.isEmpty()) {
+                            Appointment currApp = (Appointment) appQueue.dequeue();
+                            if (currApp.getAppID().equals(appObj.getAppID())) {
+                                // do nothing
+                            }
+                            else {
+                                tempApp.enqueue(currApp);
+                            }
+                        }
+                        while (!tempApp.isEmpty()) {
+                            appQueue.enqueue(tempApp.dequeue());
+                        }
+                        
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|             Appointment has been verified.              |");
+                        System.out.println("|                   New invoice added!                    |");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.print(" Press [Enter] to continue");
+                        String enter = inText.nextLine();
+                        break;
+                    }
+                }
                 else {
                     // display error
                 }
@@ -363,13 +428,13 @@ public class ClinicQApps
             else if (object instanceof Patient) {
                 Patient patObj = (Patient) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|               PATIENT DATA               |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                      PATIENT DATA                       |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" "+patObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
-                System.out.println("|           [A] Edit, [C] Back             |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                   [A] Edit, [C] Back                    |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option == 'a') {
@@ -379,9 +444,9 @@ public class ClinicQApps
                     break;
                 }
                 else {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                       Invalid key!                      |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -389,13 +454,13 @@ public class ClinicQApps
             else if (object instanceof Doctor) {
                 Doctor docObj = (Doctor) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|                DOCTOR DATA               |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                       DOCTOR DATA                       |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" "+docObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
-                System.out.println("|           [A] Edit, [C] Back             |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                    [A] Edit, [C] Back                   |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option == 'a') {
@@ -405,9 +470,35 @@ public class ClinicQApps
                     break;
                 }
                 else {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                     Invalid key!                        |");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
+            }
+            else if (object instanceof Invoice) {
+                Invoice invObj = (Invoice) object;
+                System.out.print("\f");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                      INVOICE DATA                       |");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println(" "+invObj.toStringFormatted());
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                  [A] Verify, [C] Back                   |");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.print(" Option : ");
+                char option = inChar.next().charAt(0);
+                if (option == 'A' || option == 'a') {
+                    editData(list,key);
+                }
+                else if (option == 'C' || option == 'c') {
+                    break;
+                }
+                else {
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                      Invalid key!                       |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -419,9 +510,10 @@ public class ClinicQApps
     public static void addData(Queue list, Queue list2) {
         if (list.getFront() instanceof Appointment) {
             System.out.print("\f");
-            System.out.println("+------------------------------------------+");
-            System.out.println("|            ADD NEW APPOINTMENT           |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                  ADD NEW APPOINTMENT                    |");
+            System.out.println("+---------------------------------------------------------+");
+            Appointment app = new Appointment();
             Patient pat = new Patient(); // placeholder var
             Doctor doc = new Doctor(); // placeholder var
             System.out.print(" NRIC : ");
@@ -429,7 +521,9 @@ public class ClinicQApps
             if (!patientIsExist(list2,NRIC)) {
                 System.out.print(" Patient Name : ");
                 String patName = inText.nextLine();
-                pat = new Patient("P"+generateID(list),NRIC,patName);
+                System.out.print(" Patient phone number : ");
+                String patPhone = inText.nextLine();
+                pat = new Patient("P"+generateID(list),NRIC,patName,patPhone);
                 list2.enqueue(pat);
             } else {
                 Queue temp = new Queue();
@@ -443,26 +537,132 @@ public class ClinicQApps
                 while(!temp.isEmpty()) {
                     list2.enqueue(temp.dequeue());
                 }
-                System.out.println(" [Identical NRIC found!]");
                 System.out.println(" Patient Name : "+pat.getPatName());
+                System.out.println(" Phone : "+pat.getPatPhone());
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                    Patient exist!                       |");
+                System.out.println("+---------------------------------------------------------+");
             }
-            System.out.print(" Date (DD/MM/YYYY) : ");
-            String date = inText.nextLine();
-            System.out.print(" Time (24-hours format) : ");
-            String time = inText.nextLine();
+            // Choose category
+            String category = "Not set";
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println(" Choose category,");
+            System.out.println(" [1] Medical Checkup");
+            System.out.println(" [2] Pregnancy Test");
+            System.out.println(" [3] Blood Test");
+            System.out.println(" [4] Eye Test");
+            System.out.println(" [5] Vaccination");
+            System.out.println("+---------------------------------------------------------+");
+            int optCat = inNum.nextInt();
+            if (optCat == 1) { category = "Medical Checkup"; }
+            else if (optCat == 2) { category = "Pregnancy Test"; }
+            else if (optCat == 3) { category = "Blood Test"; }
+            else if (optCat == 4) { category = "Eye Test"; }
+            else { category = "Vaccination"; }
+            // SET DATE AND TIME
+            String date = ""; // Data holding
+            int slot = 0; // Data holding
+            while (true) {
+                System.out.print("\f");
+                Queue temp = new Queue();
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                   Set Date and Time                     |");
+                System.out.println("+---------------------------------------------------------+");
+                boolean dateIsChoosen = false;
+                System.out.print(" Date (DD/MM/YYYY) : ");
+                date = inText.nextLine();
+                System.out.println("+---------------------------------------------------------+");
+                while (true) {
+                    System.out.print("\f");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                    Set Date and Time                    |");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println(" Date (DD/MM/YYYY) : "+date);
+                    System.out.println("+---------------------------------------------------------+");
+                    int time = 1000;
+                    // A total of 6 slots, 1 hour each, from 10 am to 3 pm
+                    Queue slotList = new Queue();
+                    for (int i=0; i<6; i++) {
+                        boolean isExist = false;
+                        while (!list.isEmpty()) {
+                            Appointment currentObj = (Appointment) list.dequeue();
+                            if (currentObj.getDate().equals(date) && currentObj.getSlot() == (i+1)) {
+                                isExist = true;
+                                // NEW
+                            }
+                            temp.enqueue(currentObj);
+                        }
+                        while (!temp.isEmpty()) {
+                            list.enqueue(temp.dequeue());
+                        }
+                        if (isExist == true) {
+                            System.out.println(" Slot "+(i+1)+" is reserved [/]");
+                            System.out.println("+---------------------------------------------------------+");
+                            slotList.enqueue(1);
+                        }
+                        else {
+                            System.out.println(" ["+time+"-"+(time+100)+"] Slot "+(i+1)+" is empty!");
+                            System.out.println("+---------------------------------------------------------+");
+                            slotList.enqueue(0);
+                        }
+                        time+=100;
+                    }
+                    System.out.println(slotList);
+                    System.out.print(" Choose available slot ('0' to back) : ");
+                    int slotOpt = inNum.nextInt();
+                    boolean isEmpty = true;
+                    if (slotOpt == 0) {
+                        break;
+                    }
+                    else if (slotOpt >= 1 && slotOpt <= 6) {
+                        int counter2 = 1;
+                        while (!slotList.isEmpty()) {
+                            int currentSlot = (int) slotList.dequeue();
+                            if (counter2 == slotOpt) {
+                                if (currentSlot == 1) {
+                                    isEmpty = false;
+                                }
+                            }
+                            counter2++;
+                        }
+                        if (isEmpty == true) {
+                            slot = slotOpt;
+                            dateIsChoosen = true;
+                            break;
+                        }
+                        else {
+                            System.out.println("+---------------------------------------------------------+");
+                            System.out.println("|                   Slot is reserved!                     |");
+                            System.out.println("+---------------------------------------------------------+");
+                            System.out.print(" Press [Enter] to continue");
+                            String enter = inText.nextLine();
+                        }
+                    } else {
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|                     Invalid key!                        |");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.print(" Press [Enter] to continue");
+                        String enter = inText.nextLine();
+                    }
+                }
+                if (dateIsChoosen == true) {
+                    break;
+                }
+            }
+            //===================
             while (true) {
                 // Choose doctor
                 int counter = 0;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|      Choose a doctor to be assigned :    |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|             Choose a doctor to be assigned :            |");
+                System.out.println("+---------------------------------------------------------+");
                 Queue temp = new Queue();
                 while (!docQueue.isEmpty()) {
                     Doctor docObj = (Doctor) docQueue.dequeue();
                     System.out.println(" "+(counter+1)+"]"+docObj.toStringFormatted());
                     counter++;
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                     temp.enqueue(docObj);
                 }
                 while(!temp.isEmpty()) {
@@ -486,29 +686,30 @@ public class ClinicQApps
                     break;
                 }
                 else {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                     Invalid key!                        |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
             }
-            System.out.print("\f");
-            System.out.println("+------------------------------------------+");
-            System.out.println("|            ADD NEW APPOINTMENT           |");
-            System.out.println("+------------------------------------------+");
-            System.out.println(" Date : "+date);
-            System.out.println(" Time : "+time);
-            System.out.println("+------------------------------------------+");
-            System.out.println(pat.toStringFormatted());
-            System.out.println("+------------------------------------------+");
-            System.out.println(doc.toStringFormatted());
             // add to list
-            list.enqueue(new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,time,"Pending"));
+            app = new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,slot,category);
+            list.enqueue(app);
+            System.out.print("\f");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                   ADD NEW APPOINTMENT                   |");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println(" Date : "+app.getDate());
+            System.out.println(" Slot : "+app.getSlot()+" | Time : "+app.getTime());
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println(pat.toStringFormatted());
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println(doc.toStringFormatted());
             
-            System.out.println("+------------------------------------------+");
-            System.out.println("|           Data has been added!           |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                   Data has been added!                  |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
         }
@@ -556,6 +757,25 @@ public class ClinicQApps
                     return randInt;
                 }
             }
+            else if (list.getFirst() instanceof Invoice) {
+                boolean isExist = false;
+                Random rand = new Random();
+                int randInt = rand.nextInt(100);
+                while (!list.isEmpty()) {
+                    Invoice invObj = (Invoice) invQueue.dequeue();
+                    int getID = Integer.parseInt(invObj.getInvID().substring(1));
+                    if (getID == randInt) {
+                        isExist = true;
+                    }
+                    temp.enqueue(invObj);
+                }
+                while(!temp.isEmpty()) {
+                    list.enqueue(temp.dequeue());
+                }
+                if (isExist == false) {
+                    return randInt;
+                }
+            }
         }
     }
     
@@ -577,64 +797,136 @@ public class ClinicQApps
     }
     
     // EDIT DATA IN LIST
-    public static void editData(LinkedList list, int key) {
+    public static void editData(Queue list, int key) {
         int counter = 1;
-        Object object = (Object) list.getFirst();
-        while (counter != key) {
-            object = (Object) list.getNext();
+        Object object = (Object) list.getFront();
+        Queue temp = new Queue();
+        while (!list.isEmpty()) {
+            Object curObj = (Object) list.dequeue();
+            if (counter == key) {
+                object = curObj;
+            }
             counter++;
         }
         while (true) {
             if (object instanceof Appointment) {
                 Appointment appObj = (Appointment) object;
-                Doctor docObj = (Doctor) getObjectByID(appObj.getDocID());
+                Doctor docObj = (Doctor) getObjectByID(appObj.getDocID(),docQueue);
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|           EDIT APPOINTMENT DATA          |");
-                System.out.println("+------------------------------------------+");
-                System.out.println(" A] Date : "+appObj.getDate());
-                System.out.println(" B] Time : "+appObj.getTime());
-                System.out.println(" C] Assigned Doctor : "+docObj.getDocName());
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                  EDIT APPOINTMENT DATA                  |");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println(" A] Slot : "+appObj.getSlot());
+                System.out.println("    Date : "+appObj.getTime());
+                System.out.println("    Time : "+appObj.getTime());
+                System.out.println(" B] Assigned Doctor : "+docObj.getDocName());
+                System.out.println(" C] Category : "+appObj.getCategory());
                 System.out.println(" E] Back");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option =='a') {
-                    System.out.println(" Current date : "+appObj.getDate());
-                    System.out.print(" New date (DD/MM/YYYY) : ");
-                    String newDate = inText.nextLine();
-                    appObj.setDate(newDate);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
-                    System.out.print(" Press [Enter] to continue");
-                    String enter = inText.nextLine();
+                    String date = ""; // Data holding
+                    int slot = 0; // Data holding
+                    while (true) {
+                        System.out.print("\f");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|                   Set Date and Time                     |");
+                        System.out.println("+---------------------------------------------------------+");
+                        boolean dateIsChoosen = false;
+                        System.out.print(" Date (DD/MM/YYYY) : ");
+                        date = inText.nextLine();
+                        System.out.println("+---------------------------------------------------------+");
+                        while (true) {
+                            System.out.print("\f");
+                            System.out.println("+---------------------------------------------------------+");
+                            System.out.println("|                    Set Date and Time                    |");
+                            System.out.println("+---------------------------------------------------------+");
+                            System.out.println(" Date (DD/MM/YYYY) : "+date);
+                            System.out.println("+---------------------------------------------------------+");
+                            int time = 1000;
+                            // A total of 6 slots, 1 hour each, from 10 am to 3 pm
+                            Queue slotList = new Queue();
+                            for (int i=0; i<6; i++) {
+                                boolean isExist = false;
+                                while (!list.isEmpty()) {
+                                    Appointment currentObj = (Appointment) list.dequeue();
+                                    if (currentObj.getDate().equals(date) && currentObj.getSlot() == (i+1)) {
+                                        isExist = true;
+                                    }
+                                    temp.enqueue(currentObj);
+                                }
+                                while (!temp.isEmpty()) {
+                                    list.enqueue(temp.dequeue());
+                                }
+                                if (isExist == true) {
+                                    System.out.println(" Slot "+(i+1)+" is reserved [/]");
+                                    System.out.println("+---------------------------------------------------------+");
+                                    slotList.addLast(1);
+                                }
+                                else {
+                                    System.out.println(" ["+time+"] Slot "+(i+1)+" is empty!");
+                                    System.out.println("+---------------------------------------------------------+");
+                                    slotList.addLast(0);
+                                }
+                                time+=100;
+                            }
+                            System.out.print(" Choose available slot ('0' to back) : ");
+                            int slotOpt = inNum.nextInt();
+                            boolean isEmpty = true;
+                            if (slotOpt == 0) {
+                                break;
+                            }
+                            else if (slotOpt >= 1 && slotOpt <= 6) {
+                                int counter2 = 1;
+                                while (!slotList.isEmpty()) {
+                                    int currentSlot = (int) slotList.dequeue();
+                                    if (counter2 == slotOpt) {
+                                        if (currentSlot == 1) {
+                                            isEmpty = false;
+                                        }
+                                    }
+                                }
+                                if (isEmpty == true) {
+                                    slot = slotOpt;
+                                    dateIsChoosen = true;
+                                    break;
+                                }
+                                else {
+                                    System.out.println("+---------------------------------------------------------+");
+                                    System.out.println("|                    Slot is reserved!                    |");
+                                    System.out.println("+---------------------------------------------------------+");
+                                    System.out.print(" Press [Enter] to continue");
+                                    String enter = inText.nextLine();
+                                }
+                            } else {
+                                System.out.println("+---------------------------------------------------------+");
+                                System.out.println("|                       Invalid key!                      |");
+                                System.out.println("+---------------------------------------------------------+");
+                                System.out.print(" Press [Enter] to continue");
+                                String enter = inText.nextLine();
+                            }
+                        }
+                        if (dateIsChoosen == true) {
+                            appObj.setDate(date);
+                            appObj.setSlot(slot);
+                            break;
+                        }
+                    }
                 }
                 else if (option == 'B' || option == 'b') {
-                    System.out.println(" Current time : "+appObj.getTime());
-                    System.out.print(" New date (24-hours format) : ");
-                    String newTime = inText.nextLine();
-                    appObj.setTime(newTime);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
-                    System.out.print(" Press [Enter] to continue");
-                    String enter = inText.nextLine();
-                }
-                else if (option == 'C' || option == 'c') {
                     while (true) {
                         // Choose doctor
                         int countDoc = 0;
                         System.out.print("\f");
-                        System.out.println("+------------------------------------------+");
-                        System.out.println("|      Choose a doctor to be assigned :    |");
-                        System.out.println("+------------------------------------------+");
-                        Queue temp = new Queue();
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|             Choose a doctor to be assigned :            |");
+                        System.out.println("+---------------------------------------------------------+");
                         while (!docQueue.isEmpty()) {
                             Doctor currentDoc = (Doctor) docQueue.dequeue();
                             System.out.println(" "+(countDoc+1)+"]"+currentDoc.toStringFormatted());
                             countDoc++;
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             temp.enqueue(currentDoc);
                         }
                         while(!temp.isEmpty()) {
@@ -658,13 +950,37 @@ public class ClinicQApps
                             break;
                         }
                         else {
-                            System.out.println("+------------------------------------------+");
-                            System.out.println("|               Invalid key!               |");
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
+                            System.out.println("|                     Invalid key!                        |");
+                            System.out.println("+---------------------------------------------------------+");
                             System.out.print(" Press [Enter] to continue");
                             String enter = inText.nextLine();
                         }
                     }
+                }
+                else if (option == 'C' || option == 'c') {
+                    System.out.println(" Current category : "+appObj.getCategory());
+                    String category = "Not set";
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println(" Choose category,");
+                    System.out.println(" [1] Medical Checkup");
+                    System.out.println(" [2] Pregnancy Test");
+                    System.out.println(" [3] Blood Test");
+                    System.out.println(" [4] Eye Test");
+                    System.out.println(" [5] Vaccination");
+                    System.out.println("+------------------------------------------+");
+                    int optCat = inNum.nextInt();
+                    if (optCat == 1) { category = "Medical Checkup"; }
+                    else if (optCat == 2) { category = "Pregnancy Test"; }
+                    else if (optCat == 3) { category = "Blood Test"; }
+                    else if (optCat == 4) { category = "Eye Test"; }
+                    else { category = "Vaccination"; }
+                    appObj.setCategory(category);
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|           Data has been edited!          |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
                 }
                 else {
                     break;
@@ -673,13 +989,14 @@ public class ClinicQApps
             else if (object instanceof Patient) {
                 Patient patObj = (Patient) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|             EDIT PATIENT DATA            |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                    EDIT PATIENT DATA                    |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" A] NRIC : "+patObj.getNRIC());
                 System.out.println(" B] Name : "+patObj.getPatName());
-                System.out.println(" C] Back");
-                System.out.println("+------------------------------------------+");
+                System.out.println(" C] Phone : "+patObj.getPatPhone());
+                System.out.println(" D] Back");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option =='a') {
@@ -687,9 +1004,9 @@ public class ClinicQApps
                     System.out.print(" New NRIC : ");
                     String newNRIC = inText.nextLine();
                     patObj.setNRIC(newNRIC);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                  Data has been edited!                  |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -698,6 +1015,17 @@ public class ClinicQApps
                     System.out.print(" New name : ");
                     String newName = inText.nextLine();
                     patObj.setPatName(newName);
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                  Data has been edited!                  |");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 'C' || option == 'c') {
+                    System.out.println(" Current phone : "+patObj.getPatPhone());
+                    System.out.print(" New phone : ");
+                    String newPhone = inText.nextLine();
+                    patObj.setPatPhone(newPhone);
                     System.out.println("+------------------------------------------+");
                     System.out.println("|           Data has been edited!          |");
                     System.out.println("+------------------------------------------+");
@@ -711,13 +1039,14 @@ public class ClinicQApps
             else if (object instanceof Doctor) {
                 Doctor docObj = (Doctor) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|            EDIT DOCTOR'S DATA            |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                   EDIT DOCTOR'S DATA                    |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" A] Name : "+docObj.getDocName());
                 System.out.println(" B] Specialty : "+docObj.getSpecialty());
-                System.out.println(" C] Back");
-                System.out.println("+------------------------------------------+");
+                System.out.println(" C] Phone : "+docObj.getDocPhone());
+                System.out.println(" D] Back");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option =='a') {
@@ -725,9 +1054,9 @@ public class ClinicQApps
                     System.out.print(" New name : ");
                     String newName = inText.nextLine();
                     docObj.setDocName(newName);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                  Data has been edited!                  |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -736,6 +1065,17 @@ public class ClinicQApps
                     System.out.print(" New specialty : ");
                     String newSpec = inText.nextLine();
                     docObj.setSpecialty(newSpec);
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                  Data has been edited!                  |");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                }
+                else if (option == 'C' || option == 'c') {
+                    System.out.println(" Current phone : "+docObj.getDocPhone());
+                    System.out.print(" New phone : ");
+                    String newPhone = inText.nextLine();
+                    docObj.setDocPhone(newPhone);
                     System.out.println("+------------------------------------------+");
                     System.out.println("|           Data has been edited!          |");
                     System.out.println("+------------------------------------------+");
@@ -744,6 +1084,43 @@ public class ClinicQApps
                 }
                 else {
                     break;
+                }
+            }
+            else if (object instanceof Invoice) {
+                Invoice invObj = (Invoice) object;
+                System.out.print("\f");
+                System.out.println("+------------------------------------------+");
+                System.out.println("|              VERIFY INVOICE              |");
+                System.out.println("+------------------------------------------+");
+                System.out.print(" Verify payment? (Y/N) : ");
+                char option = inChar.next().charAt(0);
+                System.out.println("+------------------------------------------+");
+                if (option == 'Y' || option =='y') {
+                    System.out.println(" Choose payment method,");
+                    System.out.println(" [1] Cash");
+                    System.out.println(" [2] Debit");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Option : ");
+                    int optPay = inNum.nextInt();
+                    // Set
+                    invObj.setPayMethod(optPay);
+                    invObj.setPayStatus("Confirmed");
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|             Payment verified!            |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
+                    break;
+                }
+                else if (option == 'N' || option == 'n') {
+                    break;
+                }
+                else {
+                    System.out.println("+------------------------------------------+");
+                    System.out.println("|               Invalid key!               |");
+                    System.out.println("+------------------------------------------+");
+                    System.out.print(" Press [Enter] to continue");
+                    String enter = inText.nextLine();
                 }
             }
         }
@@ -766,9 +1143,9 @@ public class ClinicQApps
             list.enqueue(temp.dequeue());
         }
         System.out.print("\f");
-        System.out.println("+------------------------------------------+");
-        System.out.println("|                  Delete?                 |");
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|                         Delete?                         |");
+        System.out.println("+---------------------------------------------------------+");
         if (object instanceof Appointment) {
             Appointment appObj = (Appointment) object;
             System.out.println(" "+appObj.toStringFormatted());
@@ -779,9 +1156,9 @@ public class ClinicQApps
         else if (object instanceof Doctor) {
             // to be determined
         }
-        System.out.println("+------------------------------------------+");
-        System.out.println("|              [Y] Yes, [N] No             |");
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|                     [Y] Yes, [N] No                     |");
+        System.out.println("+---------------------------------------------------------+");
         System.out.print(" Option : ");
         char option = inChar.next().charAt(0);
         if (option == 'Y' || option == 'y') {
@@ -797,9 +1174,9 @@ public class ClinicQApps
             while (!tempQ.isEmpty()) {
                 list.enqueue(tempQ.dequeue());
             }
-            System.out.println("+------------------------------------------+");
-            System.out.println("|           Data has been deleted!         |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                  Data has been deleted!                 |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
             return true;
@@ -810,43 +1187,43 @@ public class ClinicQApps
     }
     
     // Getting specific data by ID
-    public static Object getObjectByID(String id) {
+    public static Object getObjectByID(String id,Queue list) {
         Queue temp = new Queue();
         Object object = new Object();
         if (id.substring(0,1).equals("A")) {
-            while (!appQueue.isEmpty()) {
-                Appointment appObj = (Appointment) appQueue.dequeue();
+            while (!list.isEmpty()) {
+                Appointment appObj = (Appointment) list.dequeue();
                 if (appObj.getAppID().equals(id)) {
                     object = appObj;
                 }
                 temp.enqueue(appObj);
             }
             while (!temp.isEmpty()) {
-                appQueue.enqueue(temp.dequeue());
+                list.enqueue(temp.dequeue());
             }
         }
         else if (id.substring(0,1).equals("P")) {
-            while (!patQueue.isEmpty()) {
-                Patient patObj = (Patient) patQueue.dequeue();
+            while (!list.isEmpty()) {
+                Patient patObj = (Patient) list.dequeue();
                 if (patObj.getPatID().equals(id)) {
                     object = patObj;
                 }
                 temp.enqueue(patObj);
             }
             while (!temp.isEmpty()) {
-                patQueue.enqueue(temp.dequeue());
+                list.enqueue(temp.dequeue());
             }
         }
         else if (id.substring(0,1).equals("D")) {
-            while (!docQueue.isEmpty()) {
-                Doctor docObj = (Doctor) docQueue.dequeue();
+            while (!list.isEmpty()) {
+                Doctor docObj = (Doctor) list.dequeue();
                 if (docObj.getDocID().equals(id)) {
                     object = docObj;
                 }
                 temp.enqueue(docObj);
             }
             while (!temp.isEmpty()) {
-                docQueue.enqueue(temp.dequeue());
+                list.enqueue(temp.dequeue());
             }
         }
         return object;
@@ -856,20 +1233,20 @@ public class ClinicQApps
     public static void searchData(Queue list,Queue list2) {
         while (true) {
             System.out.print("\f");
-            System.out.println("+------------------------------------------+");
-            System.out.println("|               SEARCH DATA                |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                       SEARCH DATA                       |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Enter keyword ('0' to back) : ");
             String keyword = inText.nextLine();
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
             if (keyword.equals("0")) {
                 break;
             }
             while (true) {
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|               SEARCH DATA                |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                      SEARCH DATA                        |");
+                System.out.println("+---------------------------------------------------------+");
                 int counter = 1;
                 int countFound = 0;
                 Queue keyFound = new Queue();
@@ -878,9 +1255,9 @@ public class ClinicQApps
                     while (!list.isEmpty()) {
                         Appointment appObj = (Appointment) list.dequeue();
                         if (appObj.getDate().equalsIgnoreCase(keyword) || appObj.getTime().equalsIgnoreCase(keyword) ||
-                            appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getStatus().equalsIgnoreCase(keyword)) {
+                            appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getCategory().equalsIgnoreCase(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+appObj.toString()); 
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             keyFound.enqueue(counter);
                             countFound++;
                         }
@@ -897,7 +1274,7 @@ public class ClinicQApps
                         if (patObj.getPatID().equalsIgnoreCase(keyword) || patObj.getNRIC().equalsIgnoreCase(keyword) ||
                             patObj.getPatName().equalsIgnoreCase(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+patObj.toString()); 
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             keyFound.enqueue(counter);
                             countFound++;
                         }
@@ -914,7 +1291,7 @@ public class ClinicQApps
                         if (docObj.getDocID().equalsIgnoreCase(keyword) || docObj.getDocName().equalsIgnoreCase(keyword) ||
                             docObj.getSpecialty().equalsIgnoreCase(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+docObj.toString()); 
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             keyFound.enqueue(counter);
                             countFound++;
                         }
@@ -925,10 +1302,26 @@ public class ClinicQApps
                         list.enqueue(temp.dequeue());
                     }
                 }
+                else if (list.getFirst() instanceof Invoice) {
+                    while (!list.isEmpty()) {
+                        Invoice invObj = (Invoice) list.dequeue();
+                        if (invObj.getInvID().equalsIgnoreCase(keyword) || invObj.getPatNRIC().equalsIgnoreCase(keyword)) {
+                            System.out.println(" "+(countFound+1)+"] "+invObj.toString()); 
+                            System.out.println("+------------------------------------------+");
+                            keyFound.addLast(counter);
+                            countFound++;
+                        }
+                        counter++;
+                        temp.enqueue(invObj);
+                    }
+                    while (!temp.isEmpty()) {
+                        list.enqueue(temp.dequeue());
+                    }
+                }
                 
                 if (countFound == 0) {
                     System.out.println(" No data matches with the keyword : "+keyword); 
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                     break;
@@ -962,23 +1355,14 @@ public class ClinicQApps
                         displayData(list,(int) numKey);
                     }
                     else {
-                        System.out.println("+------------------------------------------+");
-                        System.out.println("|               Invalid key!               |");
-                        System.out.println("+------------------------------------------+");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|                      Invalid key!                       |");
+                        System.out.println("+---------------------------------------------------------+");
                         System.out.print(" Press [Enter] to continue");
                         String enter = inText.nextLine();
                     }
                 }
             }
         }
-    }
-    
-    // PAUSE, FOR DEBUGGING - WILL BE DELETED SOON
-    public static void pause() {
-        System.out.println("+------------------------------------------+");
-        System.out.println("|                  PAUSED!                 |");
-        System.out.println("+------------------------------------------+");
-        System.out.print(" Press [Enter] to continue");
-        String enter = inText.nextLine();
     }
 }
