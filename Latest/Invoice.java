@@ -28,6 +28,7 @@ public class Invoice
     
     public String getInvID() { return this.invID; }
     public String getPatNRIC() { return this.pat.getNRIC(); }
+    public String getPayStatus() { return this.paymentStatus; }
     public String getPayMethod() {
         String desc = "";
         if (paymentMethod==1) { desc="Cash"; }
