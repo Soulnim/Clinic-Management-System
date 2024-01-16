@@ -395,7 +395,7 @@ public class ClinicQApps
                         // Appointment has been verified
                         // Invoice is issued, and data has been removed
                         // All data has been transferred to invoice
-                        Invoice inv = new Invoice("I"+generateID(invQueue),appObj,patObj,docObj,0,"Not set");
+                        Invoice inv = new Invoice("I"+generateID(invQueue),appObj,patObj,docObj,0,"Pending");
                         invQueue.enqueue(inv);
                         // Remove appointment
                         Queue tempApp = new Queue();
