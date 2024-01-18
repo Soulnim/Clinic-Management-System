@@ -210,9 +210,9 @@ public class ClinicQApps
                 }
                 else if (object instanceof Invoice) {
                     System.out.print("\f");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               INVOICE LIST               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                      INVOICE LIST                       |");
+                    System.out.println("+---------------------------------------------------------+");
                 }
             } else {
                 System.out.print("\f");
@@ -377,6 +377,7 @@ public class ClinicQApps
                 System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
+                System.out.println("+---------------------------------------------------------+");
                 if (option == 'A' || option == 'a') {
                     editData(list,key);
                 }
@@ -676,7 +677,7 @@ public class ClinicQApps
                 Queue temp = new Queue();
                 while (!docQueue.isEmpty()) {
                     Doctor docObj = (Doctor) docQueue.dequeue();
-                    System.out.println(" "+(counter+1)+"]"+docObj.toStringFormatted());
+                    System.out.println(" "+(counter+1)+"]"+docObj.toString());
                     counter++;
                     System.out.println("+---------------------------------------------------------+");
                     temp.enqueue(docObj);
@@ -822,7 +823,11 @@ public class ClinicQApps
             if (counter == key) {
                 object = curObj;
             }
+            temp.enqueue(curObj);
             counter++;
+        }
+        while (!temp.isEmpty()) {
+            list.enqueue(temp.dequeue());
         }
         while (true) {
             if (object instanceof Appointment) {
@@ -940,7 +945,7 @@ public class ClinicQApps
                         System.out.println("+---------------------------------------------------------+");
                         while (!docQueue.isEmpty()) {
                             Doctor currentDoc = (Doctor) docQueue.dequeue();
-                            System.out.println(" "+(countDoc+1)+"]"+currentDoc.toStringFormatted());
+                            System.out.println(" "+(countDoc+1)+"]"+currentDoc.toString());
                             countDoc++;
                             System.out.println("+---------------------------------------------------------+");
                             temp.enqueue(currentDoc);
@@ -984,7 +989,7 @@ public class ClinicQApps
                     System.out.println(" [3] Blood Test");
                     System.out.println(" [4] Eye Test");
                     System.out.println(" [5] Vaccination");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                     int optCat = inNum.nextInt();
                     if (optCat == 1) { category = "Medical Checkup"; }
                     else if (optCat == 2) { category = "Pregnancy Test"; }
@@ -992,9 +997,9 @@ public class ClinicQApps
                     else if (optCat == 4) { category = "Eye Test"; }
                     else { category = "Vaccination"; }
                     appObj.setCategory(category);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                   Data has been edited!                 |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -1042,9 +1047,9 @@ public class ClinicQApps
                     System.out.print(" New phone : ");
                     String newPhone = inText.nextLine();
                     patObj.setPatPhone(newPhone);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                 Data has been edited!                   |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -1092,9 +1097,9 @@ public class ClinicQApps
                     System.out.print(" New phone : ");
                     String newPhone = inText.nextLine();
                     docObj.setDocPhone(newPhone);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                  Data has been edited!                  |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -1105,25 +1110,25 @@ public class ClinicQApps
             else if (object instanceof Invoice) {
                 Invoice invObj = (Invoice) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|              VERIFY INVOICE              |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                     VERIFY INVOICE                      |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Verify payment? (Y/N) : ");
                 char option = inChar.next().charAt(0);
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 if (option == 'Y' || option =='y') {
                     System.out.println(" Choose payment method,");
                     System.out.println(" [1] Cash");
                     System.out.println(" [2] Debit");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Option : ");
                     int optPay = inNum.nextInt();
                     // Set
                     invObj.setPayMethod(optPay);
                     invObj.setPayStatus("Confirmed");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|             Payment verified!            |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                   Payment verified!                     |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                     break;
@@ -1132,9 +1137,9 @@ public class ClinicQApps
                     break;
                 }
                 else {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                       Invalid key!                      |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -1339,7 +1344,7 @@ public class ClinicQApps
                         if (invObj.getInvID().equalsIgnoreCase(keyword) || invObj.getPatNRIC().equalsIgnoreCase(keyword) ||
                             invObj.getPatNRIC().equals(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+invObj.toString()); 
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             keyFound.addLast(counter);
                             countFound++;
                         }
