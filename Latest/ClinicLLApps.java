@@ -115,34 +115,34 @@ public class ClinicLLApps
     // LOGIN
     public static void login() {
         System.out.print("\f");
-        System.out.println("+------------------------------------------+");
-        System.out.println("|                 LOGIN                    |");
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|                        LOGIN                            |");
+        System.out.println("+---------------------------------------------------------+");
         System.out.print(" Enter security key ('0' to exit) : ");
         String secKey = inText.nextLine();
         if (secKey.equals("0")) {
             sessionCode = 0;
             System.out.print("\f");
-            System.out.println("+------------------------------------------+");
-            System.out.println("|           Session Terminated             |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                  Session Terminated                     |");
+            System.out.println("+---------------------------------------------------------+");
             return;
         }
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
         System.out.print(" Enter password : ");
         String pass = inText.nextLine();
         if (secKey.equals(SECURITY_KEY) && pass.equals(PASSWORD)) {
             sessionCode = 2;
-            System.out.println("+------------------------------------------+");
-            System.out.println("|         Logged in successfully!          |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                  Logged in successfully!                |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
         }
         else {
-            System.out.println("+------------------------------------------+");
-            System.out.println("|     Invalid security key or password!    |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|             Invalid security key or password!           |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
         }
@@ -150,16 +150,16 @@ public class ClinicLLApps
     
     public static void dashboard() {
         System.out.print("\f");
-        System.out.println("+------------------------------------------+");
-        System.out.println("|                MAIN MENU                 |");
-        System.out.println("+------------------------------------------+");
-        System.out.println("|     A] Schedule New Appointment          |");
-        System.out.println("|     B] Manage Appointment                |");
-        System.out.println("|     C] Manage Patient                    |");
-        System.out.println("|     D] Manage Invoice                    |");
-        System.out.println("|     E] Manage Doctor                     |");
-        System.out.println("|     F] Exit                              |");
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|                       MAIN MENU                         |");
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|     A] Schedule New Appointment                         |");
+        System.out.println("|     B] Manage Appointment                               |");
+        System.out.println("|     C] Manage Patient                                   |");
+        System.out.println("|     D] Manage Invoice                                   |");
+        System.out.println("|     E] Manage Doctor                                    |");
+        System.out.println("|     F] Exit                                             |");
+        System.out.println("+---------------------------------------------------------+");
         System.out.print(" Option : ");
         char option = inChar.next().charAt(0);
         if (option == 'A' || option == 'a') {
@@ -181,9 +181,9 @@ public class ClinicLLApps
             sessionCode = 1;
         }
         else {
-            System.out.println("+------------------------------------------+");
-            System.out.println("|               Invalid key!               |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                     Invalid key!                        |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
         }
@@ -201,34 +201,34 @@ public class ClinicLLApps
             if (object != null) {
                 if (object instanceof Appointment) {
                     System.out.print("\f");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|             APPOINTMENT LIST             |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                    APPOINTMENT LIST                     |");
+                    System.out.println("+---------------------------------------------------------+");
                 }
                 else if (object instanceof Patient) {
                     System.out.print("\f");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               PATIENT LIST               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                       PATIENT LIST                      |");
+                    System.out.println("+---------------------------------------------------------+");
                 }
                 else if (object instanceof Doctor) {
                     System.out.print("\f");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|                DOCTOR LIST               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                       DOCTOR LIST                       |");
+                    System.out.println("+---------------------------------------------------------+");
                 }
                 else if (object instanceof Invoice) {
                     System.out.print("\f");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               INVOICE LIST               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                       INVOICE LIST                      |");
+                    System.out.println("+---------------------------------------------------------+");
                 }
             }
             else {
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|              List is empty!              |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                    List is empty!                       |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Press [Enter] to continue");
                 String enter = inText.nextLine();
                 return;
@@ -256,7 +256,7 @@ public class ClinicLLApps
                     System.out.println(" "+(counter+1)+"] NRIC : "+pat.getNRIC()+appObj.toString());
                     appObj = (Appointment) list.getNext();
                     counter++;
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                 }
             }
             else {
@@ -269,7 +269,7 @@ public class ClinicLLApps
                     System.out.println(" "+(counter+1)+"] "+object.toString());
                     object = (Object) list.getNext();
                     counter++;
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                 }
             }
             // Check total page
@@ -280,9 +280,9 @@ public class ClinicLLApps
             else {
                 System.out.println(" [C] Previous , [V] Next , [H] Home");
             }
-            System.out.println("+------------------------------------------+ Page : "+page);
-            System.out.println("|             [S] Search Data              |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+ Page : "+page);
+            System.out.println("|                    [S] Search Data                      |");
+            System.out.println("+---------------------------------------------------------+");
             // Determine wether its is addable or not
             System.out.print(" Option : ");
             String option = inText.nextLine();
@@ -292,9 +292,9 @@ public class ClinicLLApps
             }
             else if (option.equalsIgnoreCase("C")) {
                 if (page-1<1) {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|            Page limit reached!           |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                  Page limit reached!                    |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -316,17 +316,17 @@ public class ClinicLLApps
                         displayData(list, key);
                     }
                     else {
-                        System.out.println("+------------------------------------------+");
-                        System.out.println("|               Invalid key!               |");
-                        System.out.println("+------------------------------------------+");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|                     Invalid key!                        |");
+                        System.out.println("+---------------------------------------------------------+");
                         System.out.print(" Press [Enter] to continue");
                         String enter = inText.nextLine();
                     }
                 }
                 catch (NumberFormatException e) {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                      Invalid key!                       |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -348,22 +348,22 @@ public class ClinicLLApps
                 Patient patObj = (Patient) getObjectByID(appObj.getPatID(),patLL);
                 Doctor docObj = (Doctor) getObjectByID(appObj.getDocID(),docLL);
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|             APPOINTMENT DATA             |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                    APPOINTMENT DATA                     |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(appObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(patObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(docObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
-                System.out.println("|     [A] Edit, [B] Delete, [C] Back       |");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|          [V] Verify Appointment          |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|             [A] Edit, [B] Delete, [C] Back              |");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                 [V] Verify Appointment                  |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 if (option == 'A' || option == 'a') {
                     editData(list,key);
                 }
@@ -403,10 +403,10 @@ public class ClinicLLApps
                             currApp = (Appointment) temp.getNext();
                         }
                         
-                        System.out.println("+------------------------------------------+");
-                        System.out.println("|     Appointment has been verified.       |");
-                        System.out.println("|           New invoice added!             |");
-                        System.out.println("+------------------------------------------+");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|              Appointment has been verified.             |");
+                        System.out.println("|                   New invoice added!                    |");
+                        System.out.println("+---------------------------------------------------------+");
                         System.out.print(" Press [Enter] to continue");
                         String enter = inText.nextLine();
                         break;
@@ -419,13 +419,13 @@ public class ClinicLLApps
             else if (object instanceof Patient) {
                 Patient patObj = (Patient) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|               PATIENT DATA               |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                      PATIENT DATA                       |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" "+patObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
-                System.out.println("|            [A] Edit, [C] Back            |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                   [A] Edit, [C] Back                    |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option == 'a') {
@@ -435,9 +435,9 @@ public class ClinicLLApps
                     break;
                 }
                 else {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                      Invalid key!                       |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -445,13 +445,13 @@ public class ClinicLLApps
             else if (object instanceof Doctor) {
                 Doctor docObj = (Doctor) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|               DOCTOR DATA                |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                      DOCTOR DATA                        |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" "+docObj.toStringFormatted());
-                System.out.println("+------------------------------------------+");
-                System.out.println("|            [A] Edit, [C] Back            |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                  [A] Edit, [C] Back                     |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option == 'a') {
@@ -461,9 +461,9 @@ public class ClinicLLApps
                     break;
                 }
                 else {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                     Invalid key!                        |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -472,7 +472,7 @@ public class ClinicLLApps
                 Invoice invObj = (Invoice) object;
                 System.out.print("\f");
                 System.out.println("+---------------------------------------------------------+");
-                System.out.println("|                      INVOICE DATA                       |");
+                System.out.println("|                       INVOICE DATA                       |");
                 System.out.println("+---------------------------------------------------------+");
                 System.out.println(" "+invObj.toStringFormatted());
                 if (invObj.getPayStatus().equals("Pending")) {
@@ -517,9 +517,9 @@ public class ClinicLLApps
     public static void addData(LinkedList list, LinkedList list2) {
         if (list.getFirst() instanceof Appointment) {
             System.out.print("\f");
-            System.out.println("+------------------------------------------+");
-            System.out.println("|            ADD NEW APPOINTMENT           |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                  ADD NEW APPOINTMENT                    |");
+            System.out.println("+---------------------------------------------------------+");
             Appointment app = new Appointment();
             Patient pat = new Patient();; // placeholder var
             Doctor doc = new Doctor(); // placeholder var
@@ -532,7 +532,6 @@ public class ClinicLLApps
                 String patPhone = inText.nextLine();
                 pat = new Patient("P"+generateID(list),NRIC,patName,patPhone);
                 patLL.addLast(pat);
-                System.out.println("+------------------------------------------+");
             } else {
                 Patient patObj = (Patient) list2.getFirst();
                 while (patObj != null) {
@@ -543,9 +542,9 @@ public class ClinicLLApps
                 }
                 System.out.println(" Patient Name : "+pat.getPatName());
                 System.out.println(" Phone : "+pat.getPatPhone());
-                System.out.println("+------------------------------------------+");
-                System.out.println("|             Patient exist!               |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                    Patient exist!                       |");
+                System.out.println("+---------------------------------------------------------+");
             }
             // Choose category
             String category = "Not set";
@@ -556,7 +555,7 @@ public class ClinicLLApps
             System.out.println(" [3] Blood Test");
             System.out.println(" [4] Eye Test");
             System.out.println(" [5] Vaccination");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
             int option = inNum.nextInt();
             if (option == 1) { category = "Medical Checkup"; }
             else if (option == 2) { category = "Pregnancy Test"; }
@@ -568,20 +567,20 @@ public class ClinicLLApps
             int slot = 0; // Data holding
             while (true) {
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|            Set Date and Time             |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                   Set Date and Time                     |");
+                System.out.println("+---------------------------------------------------------+");
                 boolean dateIsChoosen = false;
                 System.out.print(" Date (DD/MM/YYYY) : ");
                 date = inText.nextLine();
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 while (true) {
                     System.out.print("\f");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|            Set Date and Time             |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                   Set Date and Time                     |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.println(" Date (DD/MM/YYYY) : "+date);
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                     int time = 1000;
                     // A total of 6 slots, 1 hour each, from 10 am to 3 pm
                     LinkedList slotList = new LinkedList();
@@ -596,12 +595,12 @@ public class ClinicLLApps
                         }
                         if (isExist == true) {
                             System.out.println(" Slot "+(i+1)+" is reserved [/]");
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             slotList.addLast(1);
                         }
                         else {
                             System.out.println(" ["+time+"-"+(time+100)+"] Slot "+(i+1)+" is empty!");
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             slotList.addLast(0);
                         }
                         time+=100;
@@ -630,16 +629,16 @@ public class ClinicLLApps
                             break;
                         }
                         else {
-                            System.out.println("+------------------------------------------+");
-                            System.out.println("|            Slot is reserved!             |");
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
+                            System.out.println("|                   Slot is reserved!                     |");
+                            System.out.println("+---------------------------------------------------------+");
                             System.out.print(" Press [Enter] to continue");
                             String enter = inText.nextLine();
                         }
                     } else {
-                        System.out.println("+------------------------------------------+");
-                        System.out.println("|               Invalid key!               |");
-                        System.out.println("+------------------------------------------+");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|                       Invalid key!                      |");
+                        System.out.println("+---------------------------------------------------------+");
                         System.out.print(" Press [Enter] to continue");
                         String enter = inText.nextLine();
                     }
@@ -653,15 +652,15 @@ public class ClinicLLApps
                 // Choose doctor
                 int counter = 0;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|      Choose a doctor to be assigned :    |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|            Choose a doctor to be assigned :             |");
+                System.out.println("+---------------------------------------------------------+");
                 Doctor docObj = (Doctor) docLL.getFirst();
                 while (docObj != null) {
-                    System.out.println(" "+(counter+1)+"]"+docObj.toStringFormatted());
+                    System.out.println(" "+(counter+1)+"]"+docObj.toString());
                     docObj = (Doctor) docLL.getNext();
                     counter++;
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                 }
                 System.out.print(" Option : ");
                 int optionDoc = inNum.nextInt();
@@ -676,9 +675,9 @@ public class ClinicLLApps
                     break;
                 }
                 else {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                      Invalid key!                       |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -687,19 +686,19 @@ public class ClinicLLApps
             app = new Appointment("A"+generateID(list),pat.getPatID(),doc.getDocID(),date,slot,category);
             list.addLast(app);
             System.out.print("\f");
-            System.out.println("+------------------------------------------+");
-            System.out.println("|              NEW APPOINTMENT             |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                    NEW APPOINTMENT                      |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.println(" Date : "+app.getDate()); // to be determined
             System.out.println(" Slot : "+app.getSlot()+" | Time : "+app.getTime()); // to be determined
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
             System.out.println(pat.toStringFormatted());
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
             System.out.println(doc.toStringFormatted());
             
-            System.out.println("+------------------------------------------+");
-            System.out.println("|           Data has been added!           |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                  Data has been added!                   |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
         }
@@ -784,15 +783,16 @@ public class ClinicLLApps
                 Appointment appObj = (Appointment) object;
                 Doctor docObj = (Doctor) getObjectByID(appObj.getDocID(),docLL);
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|           EDIT APPOINTMENT DATA          |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                  EDIT APPOINTMENT DATA                  |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" A] Slot : "+appObj.getSlot());
                 System.out.println("    Date : "+appObj.getDate());
                 System.out.println("    Time : "+appObj.getTime());
                 System.out.println(" B] Assigned Doctor : "+docObj.getDocName());
                 System.out.println(" C] Category : "+appObj.getCategory());
                 System.out.println(" E] Back");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option =='a') {
@@ -800,20 +800,20 @@ public class ClinicLLApps
                     int slot = 0; // Data holding
                     while (true) {
                         System.out.print("\f");
-                        System.out.println("+------------------------------------------+");
-                        System.out.println("|            Set Date and Time             |");
-                        System.out.println("+------------------------------------------+");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|                     Set Date and Time                   |");
+                        System.out.println("+---------------------------------------------------------+");
                         boolean dateIsChoosen = false;
                         System.out.print(" Date (DD/MM/YYYY) : ");
                         date = inText.nextLine();
-                        System.out.println("+------------------------------------------+");
+                        System.out.println("+---------------------------------------------------------+");
                         while (true) {
                             System.out.print("\f");
-                            System.out.println("+------------------------------------------+");
-                            System.out.println("|            Set Date and Time             |");
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
+                            System.out.println("|                    Set Date and Time                    |");
+                            System.out.println("+---------------------------------------------------------+");
                             System.out.println(" Date (DD/MM/YYYY) : "+date);
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             int time = 1000;
                             // A total of 6 slots, 1 hour each, from 10 am to 3 pm
                             LinkedList slotList = new LinkedList();
@@ -828,12 +828,12 @@ public class ClinicLLApps
                                 }
                                 if (isExist == true) {
                                     System.out.println(" Slot "+(i+1)+" is reserved [/]");
-                                    System.out.println("+------------------------------------------+");
+                                    System.out.println("+---------------------------------------------------------+");
                                     slotList.addLast(1);
                                 }
                                 else {
                                     System.out.println(" ["+time+"] Slot "+(i+1)+" is empty!");
-                                    System.out.println("+------------------------------------------+");
+                                    System.out.println("+---------------------------------------------------------+");
                                     slotList.addLast(0);
                                 }
                                 time+=100;
@@ -862,16 +862,16 @@ public class ClinicLLApps
                                     break;
                                 }
                                 else {
-                                    System.out.println("+------------------------------------------+");
-                                    System.out.println("|            Slot is reserved!             |");
-                                    System.out.println("+------------------------------------------+");
+                                    System.out.println("+---------------------------------------------------------+");
+                                    System.out.println("|                   Slot is reserved!                     |");
+                                    System.out.println("+---------------------------------------------------------+");
                                     System.out.print(" Press [Enter] to continue");
                                     String enter = inText.nextLine();
                                 }
                             } else {
-                                System.out.println("+------------------------------------------+");
-                                System.out.println("|               Invalid key!               |");
-                                System.out.println("+------------------------------------------+");
+                                System.out.println("+---------------------------------------------------------+");
+                                System.out.println("|                      Invalid key!                       |");
+                                System.out.println("+---------------------------------------------------------+");
                                 System.out.print(" Press [Enter] to continue");
                                 String enter = inText.nextLine();
                             }
@@ -888,15 +888,15 @@ public class ClinicLLApps
                         // Choose doctor
                         int countDoc = 0;
                         System.out.print("\f");
-                        System.out.println("+------------------------------------------+");
-                        System.out.println("|      Choose a doctor to be assigned :    |");
-                        System.out.println("+------------------------------------------+");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|             Choose a doctor to be assigned :            |");
+                        System.out.println("+---------------------------------------------------------+");
                         Doctor currentDoc = (Doctor) docLL.getFirst();
                         while (currentDoc != null) {
-                            System.out.println(" "+(countDoc+1)+"] "+currentDoc.toStringFormatted());
+                            System.out.println(" "+(countDoc+1)+"] "+currentDoc.toString());
                             currentDoc = (Doctor) docLL.getNext();
                             countDoc++;
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                         }
                         System.out.print(" Option : ");
                         int optionDoc = inNum.nextInt();
@@ -911,9 +911,9 @@ public class ClinicLLApps
                             break;
                         }
                         else {
-                            System.out.println("+------------------------------------------+");
-                            System.out.println("|               Invalid key!               |");
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
+                            System.out.println("|                      Invalid key!                       |");
+                            System.out.println("+---------------------------------------------------------+");
                             System.out.print(" Press [Enter] to continue");
                             String enter = inText.nextLine();
                         }
@@ -929,7 +929,7 @@ public class ClinicLLApps
                     System.out.println(" [3] Blood Test");
                     System.out.println(" [4] Eye Test");
                     System.out.println(" [5] Vaccination");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                     int optCat = inNum.nextInt();
                     if (optCat == 1) { category = "Medical Checkup"; }
                     else if (optCat == 2) { category = "Pregnancy Test"; }
@@ -937,9 +937,9 @@ public class ClinicLLApps
                     else if (optCat == 4) { category = "Eye Test"; }
                     else { category = "Vaccination"; }
                     appObj.setCategory(category);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                   Data has been edited!                 |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -950,14 +950,14 @@ public class ClinicLLApps
             else if (object instanceof Patient) {
                 Patient patObj = (Patient) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|             EDIT PATIENT DATA            |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                     EDIT PATIENT DATA                   |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" A] NRIC : "+patObj.getNRIC());
                 System.out.println(" B] Name : "+patObj.getPatName());
                 System.out.println(" C] Phone : "+patObj.getPatPhone());
                 System.out.println(" D] Back");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option =='a') {
@@ -965,9 +965,9 @@ public class ClinicLLApps
                     System.out.print(" New NRIC : ");
                     String newNRIC = inText.nextLine();
                     patObj.setNRIC(newNRIC);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                   Data has been edited!                 |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -976,9 +976,9 @@ public class ClinicLLApps
                     System.out.print(" New name : ");
                     String newName = inText.nextLine();
                     patObj.setPatName(newName);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                   Data has been edited!                 |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -987,9 +987,9 @@ public class ClinicLLApps
                     System.out.print(" New phone : ");
                     String newPhone = inText.nextLine();
                     patObj.setPatPhone(newPhone);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                   Data has been edited!                 |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -1000,14 +1000,14 @@ public class ClinicLLApps
             else if (object instanceof Doctor) {
                 Doctor docObj = (Doctor) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|            EDIT DOCTOR'S DATA            |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                    EDIT DOCTOR'S DATA                   |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" A] Name : "+docObj.getDocName());
                 System.out.println(" B] Specialty : "+docObj.getSpecialty());
                 System.out.println(" C] Phone : "+docObj.getDocPhone());
                 System.out.println(" D] Back");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.println(" Option : ");
                 char option = inChar.next().charAt(0);
                 if (option == 'A' || option =='a') {
@@ -1015,9 +1015,9 @@ public class ClinicLLApps
                     System.out.print(" New name : ");
                     String newName = inText.nextLine();
                     docObj.setDocName(newName);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                  Data has been edited!                  |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -1026,9 +1026,9 @@ public class ClinicLLApps
                     System.out.print(" New specialty : ");
                     String newSpec = inText.nextLine();
                     docObj.setSpecialty(newSpec);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                  Data has been edited!                  |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -1037,9 +1037,9 @@ public class ClinicLLApps
                     System.out.print(" New phone : ");
                     String newPhone = inText.nextLine();
                     docObj.setDocPhone(newPhone);
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|           Data has been edited!          |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                   Data has been edited!                 |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -1050,25 +1050,25 @@ public class ClinicLLApps
             else if (object instanceof Invoice) {
                 Invoice invObj = (Invoice) object;
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|              VERIFY INVOICE              |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                     VERIFY INVOICE                      |");
+                System.out.println("+---------------------------------------------------------+");
                 System.out.print(" Verify payment? (Y/N) : ");
                 char option = inChar.next().charAt(0);
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
                 if (option == 'Y' || option =='y') {
                     System.out.println(" Choose payment method,");
                     System.out.println(" [1] Cash");
                     System.out.println(" [2] Debit");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Option : ");
                     int optPay = inNum.nextInt();
                     // Set
                     invObj.setPayMethod(optPay);
                     invObj.setPayStatus("Confirmed");
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|             Payment verified!            |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                    Payment verified!                    |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                     break;
@@ -1077,9 +1077,9 @@ public class ClinicLLApps
                     break;
                 }
                 else {
-                    System.out.println("+------------------------------------------+");
-                    System.out.println("|               Invalid key!               |");
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
+                    System.out.println("|                      Invalid key!                       |");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                 }
@@ -1096,9 +1096,9 @@ public class ClinicLLApps
             counter++;
         }
         System.out.print("\f");
-        System.out.println("+------------------------------------------+");
-        System.out.println("|                  Delete?                 |");
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
+        System.out.println("|                        Delete?                          |");
+        System.out.println("+---------------------------------------------------------+");
         if (object instanceof Appointment) {
             Appointment appObj = (Appointment) object;
             System.out.println(" "+appObj.toStringFormatted());
@@ -1109,9 +1109,9 @@ public class ClinicLLApps
         else if (object instanceof Doctor) {
             // to be determined
         }
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
         System.out.println("|              [Y] Yes, [N] No             |");
-        System.out.println("+------------------------------------------+");
+        System.out.println("+---------------------------------------------------------+");
         System.out.print(" Option : ");
         char option = inChar.next().charAt(0);
         if (option == 'Y' || option == 'y') {
@@ -1131,9 +1131,9 @@ public class ClinicLLApps
                 list.addLast(currentObj);
                 currentObj = (Object) temp.getNext();
             }
-            System.out.println("+------------------------------------------+");
-            System.out.println("|           Data has been deleted!         |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                 Data has been deleted!                  |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Press [Enter] to continue");
             String enter = inText.nextLine();
             return true;
@@ -1179,20 +1179,20 @@ public class ClinicLLApps
     public static void searchData(LinkedList list,LinkedList list2) {
         while (true) {
             System.out.print("\f");
-            System.out.println("+------------------------------------------+");
-            System.out.println("|               SEARCH DATA                |");
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
+            System.out.println("|                     SEARCH DATA                         |");
+            System.out.println("+---------------------------------------------------------+");
             System.out.print(" Enter keyword ('0' to back) : ");
             String keyword = inText.nextLine();
-            System.out.println("+------------------------------------------+");
+            System.out.println("+---------------------------------------------------------+");
             if (keyword.equals("0")) {
                 break;
             }
             while (true) {
                 System.out.print("\f");
-                System.out.println("+------------------------------------------+");
-                System.out.println("|               SEARCH DATA                |");
-                System.out.println("+------------------------------------------+");
+                System.out.println("+---------------------------------------------------------+");
+                System.out.println("|                      SEARCH DATA                        |");
+                System.out.println("+---------------------------------------------------------+");
                 int counter = 1;
                 int countFound = 0;
                 LinkedList keyFound = new LinkedList();
@@ -1204,7 +1204,7 @@ public class ClinicLLApps
                             appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getCategory().equalsIgnoreCase(keyword) ||
                             patObj.getNRIC().equalsIgnoreCase(keyword)) {
                             System.out.println(" "+(countFound+1)+"] NRIC : "+patObj.getNRIC()+appObj.toString()); 
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             keyFound.addLast(counter);
                             countFound++;
                         }
@@ -1218,7 +1218,7 @@ public class ClinicLLApps
                         if (patObj.getPatID().equalsIgnoreCase(keyword) || patObj.getNRIC().equalsIgnoreCase(keyword) ||
                             patObj.getPatName().equalsIgnoreCase(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+patObj.toString()); 
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             keyFound.addLast(counter);
                             countFound++;
                         }
@@ -1232,7 +1232,7 @@ public class ClinicLLApps
                         if (docObj.getDocID().equalsIgnoreCase(keyword) || docObj.getDocName().equalsIgnoreCase(keyword) ||
                             docObj.getSpecialty().equalsIgnoreCase(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+docObj.toString()); 
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             keyFound.addLast(counter);
                             countFound++;
                         }
@@ -1246,7 +1246,7 @@ public class ClinicLLApps
                         if (invObj.getInvID().equalsIgnoreCase(keyword) || invObj.getPatNRIC().equalsIgnoreCase(keyword) ||
                             invObj.getPatNRIC().equals(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+invObj.toString()); 
-                            System.out.println("+------------------------------------------+");
+                            System.out.println("+---------------------------------------------------------+");
                             keyFound.addLast(counter);
                             countFound++;
                         }
@@ -1257,7 +1257,7 @@ public class ClinicLLApps
                 //delete
                 if (countFound == 0) {
                     System.out.println(" No data matches with the keyword : "+keyword); 
-                    System.out.println("+------------------------------------------+");
+                    System.out.println("+---------------------------------------------------------+");
                     System.out.print(" Press [Enter] to continue");
                     String enter = inText.nextLine();
                     break;
@@ -1284,9 +1284,9 @@ public class ClinicLLApps
                         displayData(list,realNum);
                     }
                     else {
-                        System.out.println("+------------------------------------------+");
-                        System.out.println("|               Invalid key!               |");
-                        System.out.println("+------------------------------------------+");
+                        System.out.println("+---------------------------------------------------------+");
+                        System.out.println("|                      Invalid key!                       |");
+                        System.out.println("+---------------------------------------------------------+");
                         System.out.print(" Press [Enter] to continue");
                         String enter = inText.nextLine();
                     }
