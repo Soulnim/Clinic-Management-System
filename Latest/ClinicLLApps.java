@@ -1199,9 +1199,11 @@ public class ClinicLLApps
                 if (list.getFirst() instanceof Appointment) {
                     Appointment appObj = (Appointment) list.getFirst();
                     while (appObj != null) {
+                        Patient patObj = (Patient) getObjectByID(appObj.getPatID(),list2);
                         if (appObj.getDate().equalsIgnoreCase(keyword) || appObj.getTime().equalsIgnoreCase(keyword) ||
-                            appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getCategory().equalsIgnoreCase(keyword)) {
-                            System.out.println(" "+(countFound+1)+"] "+appObj.toString()); 
+                            appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getCategory().equalsIgnoreCase(keyword) ||
+                            patObj.getNRIC().equalsIgnoreCase(keyword)) {
+                            System.out.println(" "+(countFound+1)+"] NRIC : "+patObj.getNRIC()+appObj.toString()); 
                             System.out.println("+------------------------------------------+");
                             keyFound.addLast(counter);
                             countFound++;
@@ -1241,7 +1243,8 @@ public class ClinicLLApps
                 else if (list.getFirst() instanceof Invoice) {
                     Invoice invObj = (Invoice) list.getFirst();
                     while (invObj != null) {
-                        if (invObj.getInvID().equalsIgnoreCase(keyword) || invObj.getPatNRIC().equalsIgnoreCase(keyword)) {
+                        if (invObj.getInvID().equalsIgnoreCase(keyword) || invObj.getPatNRIC().equalsIgnoreCase(keyword) ||
+                            invObj.getPatNRIC().equals(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+invObj.toString()); 
                             System.out.println("+------------------------------------------+");
                             keyFound.addLast(counter);
