@@ -1270,9 +1270,24 @@ public class ClinicQApps
                 if (list.getFront() instanceof Appointment) {
                     while (!list.isEmpty()) {
                         Appointment appObj = (Appointment) list.dequeue();
+                        // Get temp list for patient
+                        Queue tempp = new Queue();
+                        Queue tempPatQ = new Queue();
+                        while (!list2.isEmpty()) {
+                            Patient currPat = (Patient) list2.dequeue();
+                            tempPatQ.enqueue(currPat);
+                            tempp.enqueue(currPat);
+                        }
+                        while (!tempp.isEmpty()) {
+                            list2.enqueue(tempp.dequeue());
+                        }
+                        //---------------
+                        String patID = appObj.getPatID();
+                        Patient patObj = (Patient) getObjectByID(patID,tempPatQ);
                         if (appObj.getDate().equalsIgnoreCase(keyword) || appObj.getTime().equalsIgnoreCase(keyword) ||
-                            appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getCategory().equalsIgnoreCase(keyword)) {
-                            System.out.println(" "+(countFound+1)+"] "+appObj.toString()); 
+                            appObj.getAppID().equalsIgnoreCase(keyword) || appObj.getCategory().equalsIgnoreCase(keyword) ||
+                            patObj.getNRIC().equals(keyword)) {
+                            System.out.println(" "+(countFound+1)+"] NRIC : "+patObj.getNRIC()+appObj.toString());
                             System.out.println("+---------------------------------------------------------+");
                             keyFound.enqueue(counter);
                             countFound++;
@@ -1321,7 +1336,8 @@ public class ClinicQApps
                 else if (list.getFirst() instanceof Invoice) {
                     while (!list.isEmpty()) {
                         Invoice invObj = (Invoice) list.dequeue();
-                        if (invObj.getInvID().equalsIgnoreCase(keyword) || invObj.getPatNRIC().equalsIgnoreCase(keyword)) {
+                        if (invObj.getInvID().equalsIgnoreCase(keyword) || invObj.getPatNRIC().equalsIgnoreCase(keyword) ||
+                            invObj.getPatNRIC().equals(keyword)) {
                             System.out.println(" "+(countFound+1)+"] "+invObj.toString()); 
                             System.out.println("+------------------------------------------+");
                             keyFound.addLast(counter);
