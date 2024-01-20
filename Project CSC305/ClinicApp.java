@@ -54,7 +54,7 @@ public class ClinicApp
             statistics();
         }
         else if (option == 'F' || option == 'f') {
-            System.out.print("\f");
+            //System.out.print("\f");
             System.out.println("+-------------------------------------------------------+");
             System.out.println(" System terminated. See you again!");
             System.out.println("+-------------------------------------------------------+");
@@ -343,7 +343,7 @@ public class ClinicApp
             int counter = 0;
             System.out.print("\f");
             System.out.println("+-------------------------------------------------------+");
-            System.out.println(" Choose appointment to be deleted");
+            System.out.println(" Choose an appointment to be deleted");
             System.out.println("+-------------------------------------------------------+");
             for (int i=dataStart; i<100; i++) {
                 if (counter != 5) {
@@ -386,7 +386,7 @@ public class ClinicApp
                     int choice = Integer.parseInt(option);
                     System.out.print("\f");
                     System.out.println("+-------------------------------------------------------+");
-                    System.out.println(" Edit Appointment");
+                    System.out.println(" Choose an appointment to be deleted...");
                     System.out.println("+-------------------------------------------------------+");
                     System.out.println(" "+(choice)+" ] "+apptList[choice-1].toString());
                     System.out.println("+-------------------------------------------------------+");
@@ -476,11 +476,104 @@ public class ClinicApp
         System.out.println(" Eye Test            : RM "+totalPayForEachCat[4]);
         System.out.println(" Total               : RM "+totalPay);
         System.out.println("+-------------------------------------------------------+");
-        System.out.println(" Average payment amount for all category : RM"+average);
-        System.out.println(" Maximum number of appointment assigned in a month : "+max);
-        System.out.println(" Minimum number of appointment assigned in a month : "+min);
+        System.out.println(" Average payment amount for all category : RM "+average);
+        System.out.println(" Maximum number of appointment assigned in a month : "+getHighest());
+        System.out.println(" Minimum number of appointment assigned in a month : "+getLowest());
         System.out.println("+-------------------------------------------------------+");
         System.out.print(" Press [Enter] to continue");
         String enter = inText.nextLine();
+    }
+    
+    // NEW
+    public static String getMonthName(int month) {
+        String monthName = "";
+        if (month==1) { monthName="January"; }
+        else if (month==2) { monthName="February"; }
+        else if (month==3) { monthName="March"; }
+        else if (month==4) { monthName="April"; }
+        else if (month==5) { monthName="May"; }
+        else if (month==6) { monthName="June"; }
+        else if (month==7) { monthName="July"; }
+        else if (month==8) { monthName="August"; }
+        else if (month==9) { monthName="September"; }
+        else if (month==10) { monthName="October"; }
+        else if (month==11) { monthName="November"; }
+        else if (month==12) { monthName="December"; }
+        
+        return monthName;
+    }
+    
+    // Get the month with highest appointment
+    public static String getHighest() {
+        int appPerMonth[] = {0,0,0,0,0,0,0,0,0,0,0,0};
+        for (int i=0;i<apptList.length;i++) {
+            if (apptList[i] == null) {
+                break;
+            }
+            int getMonth = Integer.parseInt(apptList[i].getDate().substring(3,5));
+            if (getMonth==1) { appPerMonth[0]++; }
+            else if (getMonth==2) { appPerMonth[1]++; }
+            else if (getMonth==3) { appPerMonth[2]++; }
+            else if (getMonth==4) { appPerMonth[3]++; }
+            else if (getMonth==5) { appPerMonth[4]++; }
+            else if (getMonth==6) { appPerMonth[5]++; }
+            else if (getMonth==7) { appPerMonth[6]++; }
+            else if (getMonth==8) { appPerMonth[7]++; }
+            else if (getMonth==9) { appPerMonth[8]++; }
+            else if (getMonth==10) { appPerMonth[9]++; }
+            else if (getMonth==11) { appPerMonth[10]++; }
+            else if (getMonth==12) { appPerMonth[11]++; }
+        }
+        int highest = 0;
+        int highestMonth = 0;
+        for (int i=0;i<appPerMonth.length;i++) {
+            if (appPerMonth[i] > highest) {
+                highest = appPerMonth[i];
+                highestMonth = i+1;
+            }
+        }
+        if (highest==0) {
+            return "N/A";
+        }
+        else {
+            return "[ "+getMonthName(highestMonth)+", "+highest+" appointment(s) ]";
+        }
+    }
+    
+    // Get the month with lowest appointment
+    public static String getLowest() {
+        int appPerMonth[] = {0,0,0,0,0,0,0,0,0,0,0,0};
+        for (int i=0;i<apptList.length;i++) {
+            if (apptList[i] == null) {
+                break;
+            }
+            int getMonth = Integer.parseInt(apptList[i].getDate().substring(3,5));
+            if (getMonth==1) { appPerMonth[0]++; }
+            else if (getMonth==2) { appPerMonth[1]++; }
+            else if (getMonth==3) { appPerMonth[2]++; }
+            else if (getMonth==4) { appPerMonth[3]++; }
+            else if (getMonth==5) { appPerMonth[4]++; }
+            else if (getMonth==6) { appPerMonth[5]++; }
+            else if (getMonth==7) { appPerMonth[6]++; }
+            else if (getMonth==8) { appPerMonth[7]++; }
+            else if (getMonth==9) { appPerMonth[8]++; }
+            else if (getMonth==10) { appPerMonth[9]++; }
+            else if (getMonth==11) { appPerMonth[10]++; }
+            else if (getMonth==12) { appPerMonth[11]++; }
+        }
+        int lowest = 999;
+        int lowestMonth = 0;
+        for (int i=0;i<appPerMonth.length;i++) {
+            if (appPerMonth[i] < lowest) {
+                lowest = appPerMonth[i];
+                lowestMonth = i+1;
+            }
+        }
+        if (lowest==999) {
+            return "N/A";
+        }
+        else {
+            return "[ "+getMonthName(lowestMonth)+", "+lowest+" appointment(s) ]";
+        }
     }
 }
