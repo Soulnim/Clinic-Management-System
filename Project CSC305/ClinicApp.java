@@ -536,7 +536,7 @@ public class ClinicApp
             return "N/A";
         }
         else {
-            return "[ "+getMonthName(highestMonth)+", "+highest+" appointment(s) ]";
+            return "\n [ "+getMonthName(highestMonth)+", "+highest+" appointment(s) ]";
         }
     }
     
@@ -573,7 +573,7 @@ public class ClinicApp
             return "N/A";
         }
         else {
-            return "[ "+getMonthName(lowestMonth)+", "+lowest+" appointment(s) ]";
+            return "\n [ "+getMonthName(lowestMonth)+", "+lowest+" appointment(s) ]";
         }
     }
 }
